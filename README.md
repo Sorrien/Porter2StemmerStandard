@@ -1,3 +1,5 @@
+This is a port of the original porter2stemmer for .net standard, with unit tests in .net core using nunit 3
+
 porter2-stemmer
 ===============
 
