@@ -34,7 +34,7 @@ namespace Tester
 
                 ct++;
 
-                if(ct % 100_000 == 0)
+                if(ct % 250_000 == 0)
                 {
                     Console.WriteLine($"{ct:N0}/{words.Count:N0}");
                 }

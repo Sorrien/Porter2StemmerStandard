@@ -57,7 +57,7 @@ namespace Porter2StemmerStandard
                 "proceed", "exceed", "succeed"
             };
 
-        private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer( new[]
+        private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer(new[]
             {
                 "gener", "arsen", "commun"
             });
@@ -408,14 +408,15 @@ namespace Porter2StemmerStandard
                 return word;
             }
 
-            if (word.EndsWith("ogi")
-                && SuffixInR1(word, r1, "ogi")
-                && word[word.Length - 4] == 'l')
+            if (word.EndsWith("ogi"))
             {
-                return ReplaceSuffix(word, "ogi", "og");
+                if (SuffixInR1(word, r1, "ogi")
+                   && word[word.Length - 4] == 'l')
+                {
+                    return ReplaceSuffix(word, "ogi", "og");
+                }
             }
-
-            if (word.EndsWith("li") & SuffixInR1(word, r1, "li"))
+            else if (word.EndsWith("li") & SuffixInR1(word, r1, "li"))
             {
                 if (LiEndings.Contains(word[word.Length - 3]))
                 {
@@ -490,15 +491,18 @@ namespace Porter2StemmerStandard
 
         public string Step5RemoveEorLSuffixes(string word, int r1, int r2)
         {
-            if (word.EndsWith("e") &&
-                (SuffixInR2(word, r2, "e") ||
+            var last = word[word.Length - 1];
+
+            if (last == 'e')
+            {
+                if ((SuffixInR2(word, r2, "e") ||
                     (SuffixInR1(word, r1, "e") &&
                         !EndsInShortSyllable(ReplaceSuffix(word, "e")))))
-            {
-                return ReplaceSuffix(word, "e");
+                {
+                    return ReplaceSuffix(word, "e");
+                }
             }
-
-            if (word.EndsWith("l") &&
+            else if (last == 'l' &&
                 SuffixInR2(word, r2, "l") &&
                 word.Length > 1 &&
                 word[word.Length - 2] == 'l')
