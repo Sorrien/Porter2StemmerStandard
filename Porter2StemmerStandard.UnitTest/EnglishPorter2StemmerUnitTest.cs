@@ -18,20 +18,20 @@ namespace Porter2StemmerStandard.UnitTest
 
         #region Test Stemming
 
-        [TestCaseSource(typeof(StemBatchTestCaseSource), "GetTestCaseData"), Test]
-        public void Stem_WithBatchData_StemsAllWordsCorrectly(BatchTestDataModel batchTestDataModel)
-        {
-            // Arrange
-            var stemmer = new EnglishPorter2Stemmer();
-            var unstemmed = batchTestDataModel.Unstemmed;
-            var expected = batchTestDataModel.Expected;
+        //[TestCaseSource(typeof(StemBatchTestCaseSource), "GetTestCaseData"), Test]
+        //public void Stem_WithBatchData_StemsAllWordsCorrectly(BatchTestDataModel batchTestDataModel)
+        //{
+        //    // Arrange
+        //    var stemmer = new EnglishPorter2Stemmer();
+        //    var unstemmed = batchTestDataModel.Unstemmed;
+        //    var expected = batchTestDataModel.Expected;
 
-            // Act
-            var stemmed = stemmer.Stem(unstemmed).Value;
+        //    // Act
+        //    var stemmed = stemmer.Stem(unstemmed).Value;
 
-            // Asssert
-            Assert.AreEqual(expected, stemmed);
-        }
+        //    // Asssert
+        //    Assert.AreEqual(expected, stemmed);
+        //}
 
         #endregion
 
