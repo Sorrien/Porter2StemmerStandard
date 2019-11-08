@@ -9,18 +9,18 @@ namespace Porter2StemmerStandard
     /// </summary>
     public class EnglishPorter2Stemmer : IPorter2Stemmer
     {
-        
-        private readonly char[] _alphabet = 
+
+        private readonly char[] _alphabet =
             Enumerable
                 .Range('a', 'z' - 'a' + 1)
                 .Select(c => (char)c)
-                .Concat(new[]{'\''}).ToArray();
+                .Concat(new[] { '\'' }).ToArray();
         public char[] Alphabet { get { return _alphabet; } }
 
         private readonly char[] _vowels = "aeiouy".ToArray();
         public char[] Vowels { get { return _vowels; } }
 
-        private readonly string[] _doubles = 
+        private readonly string[] _doubles =
             { "bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt" };
         public string[] Doubles { get { return _doubles; } }
 
@@ -258,7 +258,7 @@ namespace Porter2StemmerStandard
                         chars[i] = 'Y';
                     }
                 }
-                else if(Vowels.Contains(chars[i - 1]) && chars[i] == 'y')
+                else if (Vowels.Contains(chars[i - 1]) && chars[i] == 'y')
                 {
                     chars[i] = 'Y';
                 }
@@ -266,11 +266,11 @@ namespace Porter2StemmerStandard
             return new string(chars);
         }
 
+        private static IReadOnlyList<string> step0suffixes = new[] { "'s'", "'s", "'" };
         public string Step0RemoveSPluralSuffix(string word)
         {
             // Ordered from longest to shortest
-            var suffixes = new[] {"'s'", "'s", "'"};
-            foreach (var suffix in suffixes)
+            foreach (var suffix in step0suffixes)
             {
                 if (word.EndsWith(suffix))
                 {
@@ -318,23 +318,26 @@ namespace Porter2StemmerStandard
             return word;
         }
 
+        private static readonly IReadOnlyList<string> step1Bsuffixes1 = new[] { "eedly", "eed" };
+        private static readonly IReadOnlyList<string> step1Bsuffixes2 = new[] { "ed", "edly", "ing", "ingly" };
+        private static readonly IReadOnlyList<string> step1Bsuffixes3 = new[] { "at", "bl", "iz" };
         public string Step1BRemoveLySuffixes(string word, int r1)
         {
-            foreach (var suffix in new [] {"eedly", "eed"}.Where(word.EndsWith))
+            foreach (var suffix in step1Bsuffixes1.Where(word.EndsWith))
             {
-                if(SuffixInR1(word, r1, suffix))
+                if (SuffixInR1(word, r1, suffix))
                 {
                     return ReplaceSuffix(word, suffix, "ee");
                 }
                 return word;
             }
 
-            foreach (var suffix in new [] {"ed", "edly", "ing", "ingly"}.Where(word.EndsWith))
+            foreach (var suffix in step1Bsuffixes2.Where(word.EndsWith))
             {
                 var trunc = ReplaceSuffix(word, suffix);//word.Substring(0, word.Length - suffix.Length);
                 if (trunc.Any(IsVowel))
                 {
-                    if (new[] {"at", "bl", "iz"}.Any(trunc.EndsWith))
+                    if (step1Bsuffixes3.Any(trunc.EndsWith))
                     {
                         return trunc + "e";
                     }
@@ -365,34 +368,35 @@ namespace Porter2StemmerStandard
             return word;
         }
 
+        private static readonly IReadOnlyDictionary<string, string> step2Suffixes = new Dictionary<string, string>
+        {
+            {"ization", "ize"},
+            {"ational", "ate"},
+            {"ousness", "ous"},
+            {"iveness", "ive"},
+            {"fulness", "ful"},
+            {"tional", "tion"},
+            {"lessli", "less"},
+            {"biliti", "ble"},
+            {"entli", "ent"},
+            {"ation", "ate"},
+            {"alism", "al"},
+            {"aliti", "al"},
+            {"fulli", "ful"},
+            {"ousli", "ous"},
+            {"iviti", "ive"},
+            {"enci", "ence"},
+            {"anci", "ance"},
+            {"abli", "able"},
+            {"izer", "ize"},
+            {"ator", "ate"},
+            {"alli", "al"},
+            {"bli", "ble"}
+        };
+
         public string Step2ReplaceSuffixes(string word, int r1)
         {
-            var suffixes = new Dictionary<string, string>
-                {
-                    {"ization", "ize"},
-                    {"ational", "ate"},
-                    {"ousness", "ous"},
-                    {"iveness", "ive"},
-                    {"fulness", "ful"},
-                    {"tional", "tion"},
-                    {"lessli", "less"},
-                    {"biliti", "ble"},
-                    {"entli", "ent"},
-                    {"ation", "ate"},
-                    {"alism", "al"},
-                    {"aliti", "al"},
-                    {"fulli", "ful"},
-                    {"ousli", "ous"},
-                    {"iviti", "ive"},
-                    {"enci", "ence"},
-                    {"anci", "ance"},
-                    {"abli", "able"},
-                    {"izer", "ize"},
-                    {"ator", "ate"},
-                    {"alli", "al"},
-                    {"bli", "ble"}
-                };
-            foreach (var suffix in suffixes)
+            foreach (var suffix in step2Suffixes)
             {
                 if (word.EndsWith(suffix.Key))
                 {
@@ -406,8 +410,8 @@ namespace Porter2StemmerStandard
                 }
             }
 
-            if (word.EndsWith("ogi") 
-                && SuffixInR1(word, r1, "ogi") 
+            if (word.EndsWith("ogi")
+                && SuffixInR1(word, r1, "ogi")
                 && word[word.Length - 4] == 'l')
             {
                 return ReplaceSuffix(word, "ogi", "og");
@@ -424,20 +428,20 @@ namespace Porter2StemmerStandard
             return word;
         }
 
+        private static readonly IReadOnlyDictionary<string, string> step3suffixes = new Dictionary<string, string>
+        {
+            {"ational", "ate"},
+            {"tional", "tion"},
+            {"alize", "al"},
+            {"icate", "ic"},
+            {"iciti", "ic"},
+            {"ical", "ic"},
+            {"ful", null},
+            {"ness", null}
+        };
         public string Step3ReplaceSuffixes(string word, int r1, int r2)
         {
-            var suffixes = new Dictionary<string, string>
-                {
-                    {"ational", "ate"},
-                    {"tional", "tion"},
-                    {"alize", "al"},
-                    {"icate", "ic"},
-                    {"iciti", "ic"},
-                    {"ical", "ic"},
-                    {"ful", null},
-                    {"ness", null}
-                };
-            foreach (var suffix in suffixes.Where(s => word.EndsWith(s.Key)))
+            foreach (var suffix in step3suffixes.Where(s => word.EndsWith(s.Key)))
             {
                 string final;
                 if (SuffixInR1(word, r1, suffix.Key)
@@ -449,7 +453,7 @@ namespace Porter2StemmerStandard
 
             if (word.EndsWith("ative"))
             {
-                if(SuffixInR1(word, r1, "ative") && SuffixInR2(word, r2, "ative"))
+                if (SuffixInR1(word, r1, "ative") && SuffixInR2(word, r2, "ative"))
                 {
                     return ReplaceSuffix(word, "ative", null);
                 }
@@ -458,14 +462,15 @@ namespace Porter2StemmerStandard
             return word;
         }
 
+        private static IReadOnlyList<string> step4Suffixes = new[]
+        {
+            "al", "ance", "ence", "er", "ic", "able", "ible", "ant",
+            "ement", "ment", "ent", "ism", "ate", "iti", "ous",
+            "ive", "ize"
+        };
         public string Step4RemoveSomeSuffixesInR2(string word, int r2)
         {
-            foreach (var suffix in new[]
-                {
-                    "al", "ance", "ence", "er", "ic", "able", "ible", "ant", 
-                    "ement", "ment", "ent", "ism", "ate", "iti", "ous", 
-                    "ive", "ize"
-                })
+            foreach (var suffix in step4Suffixes)
             {
                 if (word.EndsWith(suffix))
                 {
@@ -477,9 +482,9 @@ namespace Porter2StemmerStandard
                 }
             }
 
-            if (word.EndsWith("ion") && 
+            if (word.EndsWith("ion") &&
                 SuffixInR2(word, r2, "ion") &&
-                new[] {'s', 't'}.Contains(word[word.Length - 4]))
+                "st".Contains(word[word.Length - 4]))
             {
                 return ReplaceSuffix(word, "ion");
             }
@@ -490,14 +495,14 @@ namespace Porter2StemmerStandard
         {
             if (word.EndsWith("e") &&
                 (SuffixInR2(word, r2, "e") ||
-                    (SuffixInR1(word, r1, "e") && 
+                    (SuffixInR1(word, r1, "e") &&
                         !EndsInShortSyllable(ReplaceSuffix(word, "e")))))
             {
                 return ReplaceSuffix(word, "e");
             }
 
-            if (word.EndsWith("l") && 
-                SuffixInR2(word, r2, "l") && 
+            if (word.EndsWith("l") &&
+                SuffixInR2(word, r2, "l") &&
                 word.Length > 1 &&
                 word[word.Length - 2] == 'l')
             {
