@@ -269,8 +269,7 @@ namespace Porter2StemmerStandard
         private static EndsWithContainer step0suffixes = new EndsWithContainer(new[] { "'s'", "'s", "'" });
         public string Step0RemoveSPluralSuffix(string word)
         {
-            // returned suffixes are ordered from longest to shortest
-            foreach (var (suffix, _) in step0suffixes.Check(word))
+            if (step0suffixes.TryFindLongestSuffix(word, out var suffix))
             {
                 return ReplaceSuffix(word, suffix);
             }
@@ -321,7 +320,7 @@ namespace Porter2StemmerStandard
         private static readonly IReadOnlyList<string> step1Bsuffixes3 = new[] { "at", "bl", "iz" };
         public string Step1BRemoveLySuffixes(string word, int r1)
         {
-            foreach (var (suffix, _) in step1Bsuffixes1.Check(word))
+            if (step1Bsuffixes1.TryFindLongestSuffix(word, out var suffix))
             {
                 if (SuffixInR1(word, r1, suffix))
                 {
@@ -330,7 +329,7 @@ namespace Porter2StemmerStandard
                 return word;
             }
 
-            foreach (var (suffix, _) in step1Bsuffixes2.Check(word))
+            if (step1Bsuffixes2.TryFindLongestSuffix(word, out suffix))
             {
                 var trunc = ReplaceSuffix(word, suffix);//word.Substring(0, word.Length - suffix.Length);
                 if (trunc.Any(IsVowel))
@@ -395,13 +394,10 @@ namespace Porter2StemmerStandard
 
         public string Step2ReplaceSuffixes(string word, int r1)
         {
-            var suffixes = step2Suffixes.Check(word);
-
-            foreach (var suffix in suffixes)
+            if (step2Suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
             {
-                string final;
-                if (SuffixInR1(word, r1, suffix.Suffix)
-                    && TryReplace(word, suffix.Suffix, suffix.Value, out final))
+                if (SuffixInR1(word, r1, suffix)
+                    && TryReplace(word, suffix, value, out var final))
                 {
                     return final;
                 }
@@ -440,13 +436,10 @@ namespace Porter2StemmerStandard
         });
         public string Step3ReplaceSuffixes(string word, int r1, int r2)
         {
-            var suffixes = step3suffixes.Check(word);
-
-            foreach (var suffix in suffixes)
+            if(step3suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
             {
-                string final;
-                if (SuffixInR1(word, r1, suffix.Suffix)
-                    && TryReplace(word, suffix.Suffix, suffix.Value, out final))
+                if (SuffixInR1(word, r1, suffix)
+                    && TryReplace(word, suffix, value, out string final))
                 {
                     return final;
                 }
@@ -471,7 +464,7 @@ namespace Porter2StemmerStandard
         });
         public string Step4RemoveSomeSuffixesInR2(string word, int r2)
         {
-            foreach (var (suffix, _) in step4Suffixes.Check(word))
+            if(step4Suffixes.TryFindLongestSuffix(word, out var suffix))
             {
                 if (SuffixInR2(word, r2, suffix))
                 {

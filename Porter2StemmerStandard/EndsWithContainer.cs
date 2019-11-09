@@ -27,11 +27,43 @@ namespace Porter2StemmerStandard
             }
         }
 
-        public IReadOnlyList<(string Suffix, string Value)> Check(string word)
+        public bool TryFindLongestSuffix(string word, out string suffix)
+        {
+            return TryFindLongestSuffixAndValue(word, out suffix, out var _);
+            //var node = _root;
+
+            //LetterNode longest = null;
+
+            //for (var i = word.Length - 1; i >= 0; i--)
+            //{
+            //    if (!node.Nodes.TryGetValue(word[i], out node))
+            //    {
+            //        break;
+            //    }
+
+            //    if (node.Suffix != null)
+            //    {
+            //        longest = node;
+            //    }
+            //}
+
+            //if (longest == null)
+            //{
+            //    suffix = default;
+            //    return false;
+            //}
+            //else
+            //{
+            //    suffix = longest.Suffix;
+            //    return true;
+            //}
+        }
+
+        public bool TryFindLongestSuffixAndValue(string word, out string suffix, out string value)
         {
             var node = _root;
 
-            var matches = new List<(string Suffix, string Value)>();
+            LetterNode longest = null;
 
             for (var i = word.Length - 1; i >= 0; i--)
             {
@@ -42,13 +74,22 @@ namespace Porter2StemmerStandard
 
                 if (node.Suffix != null)
                 {
-                    matches.Add((node.Suffix, node.Value));
+                    longest = node;
                 }
             }
 
-            matches.Reverse();
-
-            return matches;
+            if (longest == null)
+            {
+                suffix = default;
+                value = default;
+                return false;
+            }
+            else
+            {
+                suffix = longest.Suffix;
+                value = longest.Value;
+                return true;
+            }
         }
 
         private void Insert(string key, string value)
