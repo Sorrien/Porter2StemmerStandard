@@ -17,15 +17,15 @@ namespace Porter2StemmerStandard
                 .Concat(new[] { '\'' }).ToArray();
         public char[] Alphabet { get { return _alphabet; } }
 
-        private readonly char[] _vowels = "aeiouy".ToArray();
-        public char[] Vowels { get { return _vowels; } }
+        private static readonly HashSet<char> _vowels = new HashSet<char>("aeiouy");
+        public char[] Vowels { get { return _vowels.ToArray(); } }
 
         private readonly string[] _doubles =
             { "bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt" };
         public string[] Doubles { get { return _doubles; } }
 
-        private readonly char[] _liEndings = "cdeghkmnrt".ToArray();
-        public char[] LiEndings { get { return _liEndings; } }
+        private static readonly HashSet<char> _liEndings = new HashSet<char>("cdeghkmnrt");
+        public char[] LiEndings { get { return _liEndings.ToArray(); } }
 
         private readonly char[] _nonShortConsonants = "wxY".ToArray();
 
@@ -103,12 +103,12 @@ namespace Porter2StemmerStandard
 
         private bool IsVowel(char c)
         {
-            return Vowels.Contains(c);
+            return _vowels.Contains(c);
         }
 
         private bool IsConsonant(char c)
         {
-            return !Vowels.Contains(c);
+            return !_vowels.Contains(c);
         }
 
         private static bool SuffixInR1(string word, int r1, string suffix)
@@ -258,7 +258,7 @@ namespace Porter2StemmerStandard
                         chars[i] = 'Y';
                     }
                 }
-                else if (Vowels.Contains(chars[i - 1]) && chars[i] == 'y')
+                else if (_vowels.Contains(chars[i - 1]) && chars[i] == 'y')
                 {
                     chars[i] = 'Y';
                 }
@@ -414,7 +414,7 @@ namespace Porter2StemmerStandard
             }
             else if (word.EndsWith("li") & SuffixInR1(word, r1, "li"))
             {
-                if (LiEndings.Contains(word[word.Length - 3]))
+                if (_liEndings.Contains(word[word.Length - 3]))
                 {
                     return ReplaceSuffix(word, "li");
                 }
@@ -436,7 +436,7 @@ namespace Porter2StemmerStandard
         });
         public string Step3ReplaceSuffixes(string word, int r1, int r2)
         {
-            if(step3suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
+            if (step3suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
             {
                 if (SuffixInR1(word, r1, suffix)
                     && TryReplace(word, suffix, value, out string final))
@@ -464,7 +464,7 @@ namespace Porter2StemmerStandard
         });
         public string Step4RemoveSomeSuffixesInR2(string word, int r2)
         {
-            if(step4Suffixes.TryFindLongestSuffix(word, out var suffix))
+            if (step4Suffixes.TryFindLongestSuffix(word, out var suffix))
             {
                 if (SuffixInR2(word, r2, suffix))
                 {

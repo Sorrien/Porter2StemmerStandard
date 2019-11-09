@@ -16,10 +16,12 @@ namespace Tester
 
             var lines = System.IO.File.ReadAllLines(@"C:\tmp\terms\ENCOUNTERPROBLEMS-che.csv");
 
+            var splitChars = "/ ,.\\:;\"[]()-_'+&*".ToArray();
+
             var words = lines
                 .Where(line => line.Length > 0)
                 .Select(line => line.Split('¤')[2].Trim('"'))
-                .SelectMany(field => field.Split("/ ,.\\:;\"[]()-_'+&*".ToArray()))
+                .SelectMany(field => field.Split(splitChars))
                 .ToList();
 
             Console.WriteLine($"tests loaded in {sw.ElapsedMilliseconds} ms");

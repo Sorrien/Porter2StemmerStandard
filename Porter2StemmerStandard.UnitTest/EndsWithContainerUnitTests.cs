@@ -7,11 +7,11 @@ namespace Porter2StemmerStandard.UnitTest
     [TestFixture]
     public class EndsWithContainerUnitTests
     {
-        [TestCase("national", "ate", "tion")]
+        [TestCase("national", "ate")]
         [TestCase("notional", "tion")]
         [TestCase("finalize", "al")]
         [TestCase("delicate", "ic")]
-        public void Check(string word, params string[] expectedValues)
+        public void Check(string word, string expectedValue)
         {
             var target = new EndsWithContainer(new Dictionary<string, string>
             {
@@ -23,19 +23,12 @@ namespace Porter2StemmerStandard.UnitTest
                 {"ical", "ic"},
             });
 
-            var matches = target.Check(word).Select(m => m.Value).ToList();
+            var actual = target.TryFindLongestSuffixAndValue(word, out var _, out var value);
 
-            Assert.AreEqual(expectedValues, matches);
+            Assert.IsTrue(actual);
+
+            Assert.AreEqual(expectedValue, value);
         }
 
-        [Test]
-        public void Check_WantLongestFirst()
-        {
-            var target = new EndsWithContainer(new[] { "'s'", "'s", "'" });
-
-            var matches = target.Check("foo's'").Select(m => m.Suffix).ToList();
-
-            Assert.AreEqual(new[] { "'s'", "'" }, matches);
-        }
     }
 }
