@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Porter2StemmerStandard", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Porter2StemmerStandard.UnitTest", "Porter2StemmerStandard.UnitTest\Porter2StemmerStandard.UnitTest.csproj", "{3127092C-F513-4172-AEA7-E7CA88963560}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tester", "Tester\Tester.csproj", "{1E9F550A-93CF-4B88-A792-BD2103173357}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{3127092C-F513-4172-AEA7-E7CA88963560}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3127092C-F513-4172-AEA7-E7CA88963560}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3127092C-F513-4172-AEA7-E7CA88963560}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E9F550A-93CF-4B88-A792-BD2103173357}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E9F550A-93CF-4B88-A792-BD2103173357}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E9F550A-93CF-4B88-A792-BD2103173357}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E9F550A-93CF-4B88-A792-BD2103173357}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
