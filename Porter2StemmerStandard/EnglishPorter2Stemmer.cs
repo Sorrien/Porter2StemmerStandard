@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Porter2StemmerStandard
@@ -20,8 +21,9 @@ namespace Porter2StemmerStandard
         private static readonly HashSet<char> _vowels = new HashSet<char>("aeiouy");
         public char[] Vowels { get { return _vowels.ToArray(); } }
 
-        private readonly string[] _doubles =
+        private static readonly string[] _doubles =
             { "bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt" };
+        private static readonly EndsWithContainer _doublesEndsWith = new EndsWithContainer(_doubles);
         public string[] Doubles { get { return _doubles; } }
 
         private static readonly HashSet<char> _liEndings = new HashSet<char>("cdeghkmnrt");
@@ -51,7 +53,7 @@ namespace Porter2StemmerStandard
                 {"andes", "andes"}
             };
 
-        private readonly string[] _exceptionsPart2 = new[]
+        private readonly HashSet<string> _exceptionsPart2 = new HashSet<string>
             {
                 "inning", "outing", "canning", "herring", "earring",
                 "proceed", "exceed", "succeed"
@@ -153,7 +155,7 @@ namespace Porter2StemmerStandard
         /// <returns></returns>
         private static string TrimStartingApostrophe(string word)
         {
-            if (word.StartsWith("'"))
+            if (word[0] == '\'')
             {
                 word = word.Substring(1);
             }
@@ -188,15 +190,18 @@ namespace Porter2StemmerStandard
 
         private int GetRegion(string word, int begin)
         {
-            var foundVowel = false;
-            for (var i = begin; i < word.Length; i++)
+            var i = begin;
+            for (; i < word.Length; i++)
             {
                 if (IsVowel(word[i]))
                 {
-                    foundVowel = true;
-                    continue;
+                    break;
                 }
-                if (foundVowel && IsConsonant(word[i]))
+            }
+
+            for (; i < word.Length; i++)
+            {
+                if (IsConsonant(word[i]))
                 {
                     return i + 1;
                 }
@@ -258,7 +263,7 @@ namespace Porter2StemmerStandard
                         chars[i] = 'Y';
                     }
                 }
-                else if (_vowels.Contains(chars[i - 1]) && chars[i] == 'y')
+                else if (chars[i] == 'y' && _vowels.Contains(chars[i - 1]))
                 {
                     chars[i] = 'Y';
                 }
@@ -317,7 +322,7 @@ namespace Porter2StemmerStandard
 
         private static readonly EndsWithContainer step1Bsuffixes1 = new EndsWithContainer(new[] { "eedly", "eed" });
         private static readonly EndsWithContainer step1Bsuffixes2 = new EndsWithContainer(new[] { "ed", "edly", "ing", "ingly" });
-        private static readonly IReadOnlyList<string> step1Bsuffixes3 = new[] { "at", "bl", "iz" };
+        private static readonly EndsWithContainer step1Bsuffixes3 = new EndsWithContainer(new[] { "at", "bl", "iz" });
         public string Step1BRemoveLySuffixes(string word, int r1)
         {
             if (step1Bsuffixes1.TryFindLongestSuffix(word, out var suffix))
@@ -334,11 +339,11 @@ namespace Porter2StemmerStandard
                 var trunc = ReplaceSuffix(word, suffix);//word.Substring(0, word.Length - suffix.Length);
                 if (trunc.Any(IsVowel))
                 {
-                    if (step1Bsuffixes3.Any(trunc.EndsWith))
+                    if (step1Bsuffixes3.EndsWithAny(trunc))
                     {
                         return trunc + "e";
                     }
-                    if (Doubles.Any(trunc.EndsWith))
+                    if (_doublesEndsWith.EndsWithAny(trunc))
                     {
                         return trunc.Substring(0, trunc.Length - 1);
                     }
