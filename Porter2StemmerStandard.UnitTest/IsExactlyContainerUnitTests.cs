@@ -8,11 +8,10 @@ namespace Porter2StemmerStandard.UnitTest
         [Test]
         public void Contains_ItDoes()
         {
-            var target = new IsExactlyContainer(new[]
-            {
+            var target = new IsExactlyContainer(
                 "abc",
                 "xyz"
-            });
+            );
 
             var actual = target.Contains("abc");
 
@@ -25,11 +24,10 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("qwer")]
         public void Contains_ItDoesNot(string word)
         {
-            var target = new IsExactlyContainer(new[]
-               {
+            var target = new IsExactlyContainer(
                 "abc",
                 "xyz"
-            });
+            );
 
             var actual = target.Contains(word);
 

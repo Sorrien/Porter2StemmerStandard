@@ -31,38 +31,33 @@ namespace Porter2StemmerStandard
 
         private readonly char[] _nonShortConsonants = "wxY".ToArray();
 
-        private readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(new Dictionary<string, string>
-            {
-                {"skis", "ski"},
-                {"skies", "sky"},
-                {"dying", "die"},
-                {"lying", "lie"},
-                {"tying", "tie"},
-                {"idly", "idl"},
-                {"gently", "gentl"},
-                {"ugly", "ugli"},
-                {"early", "earli"},
-                {"only", "onli"},
-                {"singly", "singl"},
-                {"sky", "sky"},
-                {"news", "news"},
-                {"howe", "howe"},
-                {"atlas", "atlas"},
-                {"cosmos", "cosmos"},
-                {"bias", "bias"},
-                {"andes", "andes"}
-            });
+        private readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(
+            ("skis", "ski"),
+            ("skies", "sky"),
+            ("dying", "die"),
+            ("lying", "lie"),
+            ("tying", "tie"),
+            ("idly", "idl"),
+            ("gently", "gentl"),
+            ("ugly", "ugli"),
+            ("early", "earli"),
+            ("only", "onli"),
+            ("singly", "singl"),
+            ("sky", "sky"),
+            ("news", "news"),
+            ("howe", "howe"),
+            ("atlas", "atlas"),
+            ("cosmos", "cosmos"),
+            ("bias", "bias"),
+            ("andes", "andes")
+        );
 
-        private readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(new[]
-            {
-                "inning", "outing", "canning", "herring", "earring",
-                "proceed", "exceed", "succeed"
-            });
+        private readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(
+            "inning", "outing", "canning", "herring", "earring",
+            "proceed", "exceed", "succeed");
 
-        private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer(new[]
-            {
-                "gener", "arsen", "commun"
-            });
+        private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer(
+            "gener", "arsen", "commun");
 
         public StemmedWord Stem(string word)
         {
@@ -364,31 +359,29 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        private static readonly EndsWithContainer step2Suffixes = new EndsWithContainer(new Dictionary<string, string>
-        {
-            {"ization", "ize"},
-            {"ational", "ate"},
-            {"ousness", "ous"},
-            {"iveness", "ive"},
-            {"fulness", "ful"},
-            {"tional", "tion"},
-            {"lessli", "less"},
-            {"biliti", "ble"},
-            {"entli", "ent"},
-            {"ation", "ate"},
-            {"alism", "al"},
-            {"aliti", "al"},
-            {"fulli", "ful"},
-            {"ousli", "ous"},
-            {"iviti", "ive"},
-            {"enci", "ence"},
-            {"anci", "ance"},
-            {"abli", "able"},
-            {"izer", "ize"},
-            {"ator", "ate"},
-            {"alli", "al"},
-            {"bli", "ble"}
-        });
+        private static readonly EndsWithContainer step2Suffixes = new EndsWithContainer(
+            ("ization", "ize"),
+            ("ational", "ate"),
+            ("ousness", "ous"),
+            ("iveness", "ive"),
+            ("fulness", "ful"),
+            ("tional", "tion"),
+            ("lessli", "less"),
+            ("biliti", "ble"),
+            ("entli", "ent"),
+            ("ation", "ate"),
+            ("alism", "al"),
+            ("aliti", "al"),
+            ("fulli", "ful"),
+            ("ousli", "ous"),
+            ("iviti", "ive"),
+            ("enci", "ence"),
+            ("anci", "ance"),
+            ("abli", "able"),
+            ("izer", "ize"),
+            ("ator", "ate"),
+            ("alli", "al"),
+            ("bli", "ble"));
 
         private static bool EndsWith(string word, string prefix)
         {
@@ -453,17 +446,16 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        private static readonly EndsWithContainer step3suffixes = new EndsWithContainer(new Dictionary<string, string>
-        {
-            {"ational", "ate"},
-            {"tional", "tion"},
-            {"alize", "al"},
-            {"icate", "ic"},
-            {"iciti", "ic"},
-            {"ical", "ic"},
-            {"ful", null},
-            {"ness", null}
-        });
+        private static readonly EndsWithContainer step3suffixes = new EndsWithContainer(
+            ("ational", "ate"),
+            ("tional", "tion"),
+            ("alize", "al"),
+            ("icate", "ic"),
+            ("iciti", "ic"),
+            ("ical", "ic"),
+            ("ful", null),
+            ("ness", null)
+        );
         public string Step3ReplaceSuffixes(string word, int r1, int r2)
         {
             if (step3suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))

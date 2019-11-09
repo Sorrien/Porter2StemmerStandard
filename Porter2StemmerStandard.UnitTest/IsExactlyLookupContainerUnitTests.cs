@@ -9,11 +9,10 @@ namespace Porter2StemmerStandard.UnitTest
         [Test]
         public void TryGetValue_FindTheValue()
         {
-            var target = new IsExactlyLookupContainer(new Dictionary<string,string>
-            {
-                { "abc", "aaa" },
-                { "xyz", "zzz" },
-            });
+            var target = new IsExactlyLookupContainer(
+                ( "abc", "aaa" ),
+                ( "xyz", "zzz" )
+            );
 
             var actual = target.TryGetValue("abc", out var actualValue);
 
@@ -28,11 +27,10 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("qwer")]
         public void TryGetValue_NotFound(string word)
         {
-            var target = new IsExactlyLookupContainer(new Dictionary<string, string>
-            {
-                { "abc", "aaa" },
-                { "xyz", "zzz" },
-            });
+            var target = new IsExactlyLookupContainer(
+                ( "abc", "aaa" ),
+                ( "xyz", "zzz" )
+            );
 
             var actual = target.TryGetValue(word, out var actualValue);
 

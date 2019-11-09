@@ -11,12 +11,10 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("xyz", "xyz")]
         public void TryFindLongestPrefix_FindIt(string word, string expectedPrefix)
         {
-            var target = new StartsWithContainer(new []
-            {
+            var target = new StartsWithContainer(
                 "abc",
                 "xyz",
-                "abcd",
-            });
+                "abcd");
 
             var actual = target.TryFindLongestPrefix(word, out var actualPrefix);
 
@@ -31,12 +29,10 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("xy")]
         public void TryFindLongestPrefix_DontFindIt(string word)
         {
-            var target = new StartsWithContainer(new[]
-            {
+            var target = new StartsWithContainer(
                 "abc",
                 "xyz",
-                "abcd",
-            });
+                "abcd");
 
             var actual = target.TryFindLongestPrefix(word, out var actualPrefix);
 

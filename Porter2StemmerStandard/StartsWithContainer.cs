@@ -5,7 +5,7 @@ namespace Porter2StemmerStandard
 {
     public class StartsWithContainer
     {
-        public StartsWithContainer(IEnumerable<string> prefixes)
+        public StartsWithContainer(params string[] prefixes)
         {
             _root = new LetterNode();
 

@@ -1,25 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Porter2StemmerStandard
 {
     public class EndsWithContainer
     {
-        public EndsWithContainer(IReadOnlyDictionary<string, string> suffixMap)
+        public EndsWithContainer(params (string suffix, string value)[] suffixes)
         {
             _root = new LetterNode();
 
-            foreach (var kvp in suffixMap)
+            foreach (var (suffix, value) in suffixes)
             {
-                Insert(kvp.Key, kvp.Value);
+                Insert(suffix, value);
             }
         }
 
-        public EndsWithContainer(IEnumerable<string> suffixex)
+        public EndsWithContainer(params string[] suffixes)
         {
             _root = new LetterNode();
 
-            foreach (var suffix in suffixex)
+            foreach (var suffix in suffixes)
             {
                 Insert(suffix, null);
             }

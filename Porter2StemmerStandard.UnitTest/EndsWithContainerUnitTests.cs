@@ -12,15 +12,13 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("delicate", "ic")]
         public void TryFindLongestSuffixAndValue_FindIt(string word, string expectedValue)
         {
-            var target = new EndsWithContainer(new Dictionary<string, string>
-            {
-                {"ational", "ate"},
-                {"tional", "tion"},
-                {"alize", "al"},
-                {"icate", "ic"},
-                {"iciti", "ic"},
-                {"ical", "ic"},
-            });
+            var target = new EndsWithContainer(
+                ("ational", "ate"),
+                ("tional", "tion"),
+                ("alize", "al"),
+                ("icate", "ic"),
+                ("iciti", "ic"),
+                ("ical", "ic"));
 
             var actual = target.TryFindLongestSuffixAndValue(word, out var _, out var value);
 
@@ -35,15 +33,13 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("cal")]
         public void TryFindLongestSuffixAndValue_DontFindIt(string word)
         {
-            var target = new EndsWithContainer(new Dictionary<string, string>
-            {
-                {"ational", "ate"},
-                {"tional", "tion"},
-                {"alize", "al"},
-                {"icate", "ic"},
-                {"iciti", "ic"},
-                {"ical", "ic"},
-            });
+            var target = new EndsWithContainer(
+                ("ational", "ate"),
+                ("tional", "tion"),
+                ("alize", "al"),
+                ("icate", "ic"),
+                ("iciti", "ic"),
+                ("ical", "ic"));
 
             var actual = target.TryFindLongestSuffixAndValue(word, out var suffix, out var value);
 
@@ -61,15 +57,13 @@ namespace Porter2StemmerStandard.UnitTest
         [TestCase("bional", false)]
         public void EndsWithAny(string word, bool expected)
         {
-            var target = new EndsWithContainer(new[]
-            {
+            var target = new EndsWithContainer(
                 "ational",
                 "tional",
                 "alize",
                 "icate",
                 "iciti",
-                "ical",
-            });
+                "ical");
 
             var actual = target.EndsWithAny(word);
 

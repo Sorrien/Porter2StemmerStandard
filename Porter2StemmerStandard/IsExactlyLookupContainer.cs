@@ -5,13 +5,13 @@ namespace Porter2StemmerStandard
 {
     public class IsExactlyLookupContainer
     {
-        public IsExactlyLookupContainer(IReadOnlyDictionary<string, string> words)
+        public IsExactlyLookupContainer(params (string word, string value)[] words)
         {
             _root = new LetterNode();
 
-            foreach (var word in words)
+            foreach (var (word, value) in words)
             {
-                Insert(word.Key, word.Value);
+                Insert(word, value);
             }
         }
 

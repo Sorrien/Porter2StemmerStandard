@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Porter2StemmerStandard
 {
     public class IsExactlyContainer
     {
-
-        public IsExactlyContainer(IEnumerable<string> words)
+        public IsExactlyContainer(params string[] words)
         {
             _root = new LetterNode();
 
@@ -34,11 +32,11 @@ namespace Porter2StemmerStandard
         {
             var node = _root;
 
-            foreach(var c in word)
+            foreach (var c in word)
             {
                 var child = node.Get(c);
 
-                if(child == null)
+                if (child == null)
                 {
                     child = new LetterNode();
                     node.Children[c] = child;
