@@ -279,11 +279,11 @@ namespace Porter2StemmerStandard
         public string Step1ARemoveOtherSPluralSuffixes(string word)
         {
             if (!"sd".Contains(word[word.Length - 1])) return word;
-            if (word.EndsWith("sses"))
+            if (EndsWith(word, "sses"))
             {
                 return ReplaceSuffix(word, "sses", "ss");
             }
-            if (word.EndsWith("ied") || word.EndsWith("ies"))
+            if (EndsWith(word, "ied") || EndsWith(word, "ies"))
             {
                 var restOfWord = word.Substring(0, word.Length - 3);
                 if (word.Length > 4)
@@ -292,11 +292,11 @@ namespace Porter2StemmerStandard
                 }
                 return restOfWord + "ie";
             }
-            if (word.EndsWith("us") || word.EndsWith("ss"))
+            if (EndsWith(word, "us") || EndsWith(word, "ss"))
             {
                 return word;
             }
-            if (word.EndsWith("s"))
+            if (EndsWith(word, "s"))
             {
                 if (word.Length < 3)
                 {
@@ -392,6 +392,38 @@ namespace Porter2StemmerStandard
             {"bli", "ble"}
         });
 
+        private static bool EndsWith(string word, string prefix)
+        {
+            var length = word.Length;
+
+            if (length < prefix.Length) return false;
+            switch (prefix.Length)
+            {
+                case 5:
+                    return word[length - 1] == prefix[4] &&
+                        word[length - 2] == prefix[3] &&
+                        word[length - 3] == prefix[2] &&
+                        word[length - 4] == prefix[1] &&
+                        word[length - 5] == prefix[0];
+                case 4:
+                    return word[length - 1] == prefix[3] &&
+                        word[length - 2] == prefix[2] &&
+                        word[length - 3] == prefix[1] &&
+                        word[length - 4] == prefix[0];
+                case 3:
+                    return word[length - 1] == prefix[2] &&
+                        word[length - 2] == prefix[1] &&
+                        word[length - 3] == prefix[0];
+                case 2:
+                    return word[length - 1] == prefix[1] &&
+                        word[length - 2] == prefix[0];
+                case 1:
+                    return word[length - 1] == prefix[0];
+                default:
+                    return word.EndsWith(prefix);
+            }
+        }
+
         public string Step2ReplaceSuffixes(string word, int r1)
         {
             if (step2Suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
@@ -404,7 +436,7 @@ namespace Porter2StemmerStandard
                 return word;
             }
 
-            if (word.EndsWith("ogi"))
+            if (EndsWith(word, "ogi"))
             {
                 if (SuffixInR1(word, r1, "ogi")
                    && word[word.Length - 4] == 'l')
@@ -412,7 +444,7 @@ namespace Porter2StemmerStandard
                     return ReplaceSuffix(word, "ogi", "og");
                 }
             }
-            else if (word.EndsWith("li") & SuffixInR1(word, r1, "li"))
+            else if (EndsWith(word, "li") & SuffixInR1(word, r1, "li"))
             {
                 if (_liEndings.Contains(word[word.Length - 3]))
                 {
@@ -445,7 +477,7 @@ namespace Porter2StemmerStandard
                 }
             }
 
-            if (word.EndsWith("ative"))
+            if (EndsWith(word, "ative"))
             {
                 if (SuffixInR1(word, r1, "ative") && SuffixInR2(word, r2, "ative"))
                 {
@@ -473,7 +505,7 @@ namespace Porter2StemmerStandard
                 return word;
             }
 
-            if (word.EndsWith("ion") &&
+            if (EndsWith(word, "ion") &&
                 SuffixInR2(word, r2, "ion") &&
                 "st".Contains(word[word.Length - 4]))
             {
