@@ -1,14 +1,14 @@
 ﻿namespace Porter2StemmerStandard
 {
-    public class LetterNode
+    public class BTreeNode
     {
         private const int TableSize = 'z' + 1;
 
-        public LetterNode[] Children { get; } = new LetterNode[TableSize];
+        public BTreeNode[] Children { get; } = new BTreeNode[TableSize];
         public string Key { get; set; }
         public string Value { get; set; }
 
-        public LetterNode Get(char c)
+        public BTreeNode Get(char c)
         {
             if (c >= TableSize) return null;
             return Children[c];

@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Porter2StemmerStandard
+﻿namespace Porter2StemmerStandard
 {
-    public class IsExactlyLookupContainer
+    public class IsExactlyLookupContainer : BTreeContainer
     {
-        public IsExactlyLookupContainer(params (string word, string value)[] words)
+        public IsExactlyLookupContainer(params (string word, string value)[] words) : base(words)
         {
-            _root = new LetterNode();
-
-            foreach (var (word, value) in words)
-            {
-                Insert(word, value);
-            }
         }
 
         public bool TryGetValue(string word, out string value)
@@ -31,29 +22,5 @@ namespace Porter2StemmerStandard
             value = node.Value;
             return value != null;
         }
-
-        private void Insert(string word, string value)
-        {
-            var node = _root;
-
-            foreach (var c in word)
-            {
-                var child = node.Get(c);
-
-                if (child == null)
-                {
-                    child = new LetterNode();
-                    node.Children[c] = child;
-                }
-                node = child;
-            }
-
-            if (node.Key != null) throw new ArgumentException($"Word '{word}' already in the collection");
-
-            node.Key = word;
-            node.Value = value;
-        }
-
-        private readonly LetterNode _root;
     }
 }

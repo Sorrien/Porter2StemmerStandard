@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Porter2StemmerStandard
+﻿namespace Porter2StemmerStandard
 {
-    public class StartsWithContainer
+    public class StartsWithContainer : BTreeContainer
     {
-        public StartsWithContainer(params string[] prefixes)
+        public StartsWithContainer(params string[] prefixes) : base(prefixes)
         {
-            _root = new LetterNode();
-
-            foreach (var prefix in prefixes)
-            {
-                Insert(prefix);
-            }
         }
 
         public bool TryFindLongestPrefix(string word, out string prefix)
@@ -21,7 +12,7 @@ namespace Porter2StemmerStandard
 
             prefix = default;
 
-            foreach(var c in word)
+            foreach (var c in word)
             {
                 node = node.Get(c);
 
@@ -32,28 +23,5 @@ namespace Porter2StemmerStandard
 
             return prefix != default;
         }
-
-        private void Insert(string key)
-        {
-            var node = _root;
-
-            foreach(var c in key)
-            {
-                var child = node.Children[c];
-
-                if(child == null)
-                {
-                    child = new LetterNode();
-                    node.Children[c] = child;
-                }
-                node = child;
-            }
-
-            if (node.Key != null) throw new ArgumentException($"Key '{key}' already in the collection");
-
-            node.Key = key;
-        }
-
-        private readonly LetterNode _root;
     }
 }

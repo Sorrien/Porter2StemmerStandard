@@ -1,27 +1,15 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace Porter2StemmerStandard
 {
-    public class EndsWithContainer
+    public class EndsWithContainer : BTreeContainer
     {
-        public EndsWithContainer(params (string suffix, string value)[] suffixes)
+        public EndsWithContainer(params (string suffix, string value)[] suffixes) : base(suffixes)
         {
-            _root = new LetterNode();
-
-            foreach (var (suffix, value) in suffixes)
-            {
-                Insert(suffix, value);
-            }
         }
 
-        public EndsWithContainer(params string[] suffixes)
+        public EndsWithContainer(params string[] suffixes) : base(suffixes)
         {
-            _root = new LetterNode();
-
-            foreach (var suffix in suffixes)
-            {
-                Insert(suffix, null);
-            }
         }
 
         public bool EndsWithAny(string word)
@@ -68,28 +56,13 @@ namespace Porter2StemmerStandard
             return suffix != null;
         }
 
-        private void Insert(string key, string value)
+        // only call this from insert, the statemachine is too slow for use during actual operation
+        protected override IEnumerable<char> GetChars(string word)
         {
-            var node = _root;
-
-            for (var i = key.Length - 1; i >= 0; i--)
+            for (var i = word.Length - 1; i >= 0; i--)
             {
-                var child = node.Children[key[i]];
-
-                if(child == null)
-                {
-                    child = new LetterNode();
-                    node.Children[key[i]] = child;
-                }
-                node = child;
+                yield return word[i];
             }
-
-            if (node.Value != null) throw new ArgumentException($"Key '{key}' already in the collection");
-
-            node.Value = value;
-            node.Key = key;
         }
-
-        private readonly LetterNode _root;
     }
 }
