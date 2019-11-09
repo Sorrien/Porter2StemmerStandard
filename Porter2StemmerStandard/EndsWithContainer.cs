@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
 
 namespace Porter2StemmerStandard
 {
@@ -94,14 +92,5 @@ namespace Porter2StemmerStandard
         }
 
         private readonly LetterNode _root;
-
-        //[DebuggerDisplay("Node {Letter} {Value}")]
-        //private class LetterNode
-        //{
-        //    public char Letter;
-        //    public Dictionary<char, LetterNode> Nodes = new Dictionary<char, LetterNode>();
-        //    public string Value;
-        //    public string Suffix;
-        //}
     }
 }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Porter2StemmerStandard
 {
-    public class IsExactlyContainerLookup
+    public class IsExactlyLookupContainer
     {
-        public IsExactlyContainerLookup(IReadOnlyDictionary<string, string> words)
+        public IsExactlyLookupContainer(IReadOnlyDictionary<string, string> words)
         {
             _root = new LetterNode();
 

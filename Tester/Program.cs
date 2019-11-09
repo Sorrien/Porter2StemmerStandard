@@ -30,7 +30,7 @@ namespace Tester
 
             var ct = 0;
 
-            const int iterations = 5;
+            const int iterations = 1;
 
             for (var stupid = 0; stupid < iterations; stupid++)
             {
@@ -40,7 +40,7 @@ namespace Tester
 
                     ct++;
 
-                    if (ct % 500_000 == 0)
+                    if (ct % 1_000_000 == 0)
                     {
                         Console.WriteLine($"{ct:N0}/{words.Count * iterations:N0}");
                     }

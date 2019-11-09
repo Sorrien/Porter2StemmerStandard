@@ -31,7 +31,7 @@ namespace Porter2StemmerStandard
 
         private readonly char[] _nonShortConsonants = "wxY".ToArray();
 
-        private readonly IsExactlyContainerLookup _exceptions = new IsExactlyContainerLookup(new Dictionary<string, string>
+        private readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(new Dictionary<string, string>
             {
                 {"skis", "ski"},
                 {"skies", "sky"},
