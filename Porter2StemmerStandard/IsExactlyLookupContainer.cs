@@ -48,9 +48,9 @@ namespace Porter2StemmerStandard
                 node = child;
             }
 
-            if (node.Fix != null) throw new ArgumentException($"Word '{word}' already in the collection");
+            if (node.Key != null) throw new ArgumentException($"Word '{word}' already in the collection");
 
-            node.Fix = word;
+            node.Key = word;
             node.Value = value;
         }
 

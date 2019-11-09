@@ -25,7 +25,7 @@ namespace Porter2StemmerStandard
                 if (node == null) return false;
             }
 
-            return node.Fix != null;
+            return node.Key != null;
         }
 
         private void Insert(string word)
@@ -44,9 +44,9 @@ namespace Porter2StemmerStandard
                 node = child;
             }
 
-            if (node.Fix != null) throw new ArgumentException($"Word '{word}' already in the collection");
+            if (node.Key != null) throw new ArgumentException($"Word '{word}' already in the collection");
 
-            node.Fix = word;
+            node.Key = word;
         }
 
         private readonly LetterNode _root;

@@ -34,7 +34,7 @@ namespace Porter2StemmerStandard
 
                 if (node == null) return false;
 
-                if (node.Fix != null) return true;
+                if (node.Key != null) return true;
             }
 
             return false;
@@ -58,9 +58,9 @@ namespace Porter2StemmerStandard
 
                 if (node == null) break;
 
-                if (node.Fix != null)
+                if (node.Key != null)
                 {
-                    suffix = node.Fix;
+                    suffix = node.Key;
                     value = node.Value;
                 }
             }
@@ -87,7 +87,7 @@ namespace Porter2StemmerStandard
             if (node.Value != null) throw new ArgumentException($"Key '{key}' already in the collection");
 
             node.Value = value;
-            node.Fix = key;
+            node.Key = key;
         }
 
         private readonly LetterNode _root;
