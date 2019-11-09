@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using NUnit.Framework;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 
@@ -7,22 +6,13 @@ namespace Porter2StemmerStandard.UnitTest
 {
     public class StemBatchTestCaseSource
     {
-        public static IConfigurationRoot Configuration { get; set; }
-        public static IEnumerable<TestCaseData> GetTestCaseData()
+        public static IEnumerable<BatchTest> GetTestCaseData()
         {
-            var builder = new ConfigurationBuilder()
-              .SetBasePath(Directory.GetCurrentDirectory())
-              .AddJsonFile("data.json", false, true);
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "data.json");
+            var json = File.ReadAllText(path);
+            var models = JsonConvert.DeserializeObject<BatchTestDataModel>(json);
 
-            Configuration = builder.Build();
-
-            var models = new List<BatchTestDataModel>();
-            Configuration.Bind("TestData", models);
-
-            foreach (var model in models)
-            {
-                yield return new TestCaseData(new object[] { model });
-            }
+            return models.TestData;
         }
     }
 }
