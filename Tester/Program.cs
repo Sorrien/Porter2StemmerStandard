@@ -30,15 +30,18 @@ namespace Tester
 
             var ct = 0;
 
-            foreach(var word in words)
+            for (var stupid = 0; stupid < 5; stupid++)
             {
-                stemmer.Stem(word);
-
-                ct++;
-
-                if(ct % 250_000 == 0)
+                foreach (var word in words)
                 {
-                    Console.WriteLine($"{ct:N0}/{words.Count:N0}");
+                    stemmer.Stem(word);
+
+                    ct++;
+
+                    if (ct % 250_000 == 0)
+                    {
+                        Console.WriteLine($"{ct:N0}/{words.Count:N0}");
+                    }
                 }
             }
 

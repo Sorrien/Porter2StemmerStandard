@@ -103,16 +103,6 @@ namespace Porter2StemmerStandard
             return new StemmedWord(word.ToLowerInvariant(), original);
         }
 
-        private bool IsVowel(char c)
-        {
-            return _vowels.Contains(c);
-        }
-
-        private bool IsConsonant(char c)
-        {
-            return !_vowels.Contains(c);
-        }
-
         private static bool SuffixInR1(string word, int r1, string suffix)
         {
             return r1 <= word.Length - suffix.Length;
@@ -193,7 +183,7 @@ namespace Porter2StemmerStandard
             var i = begin;
             for (; i < word.Length; i++)
             {
-                if (IsVowel(word[i]))
+                if (Letters.IsVowel(word[i]))
                 {
                     break;
                 }
@@ -201,7 +191,7 @@ namespace Porter2StemmerStandard
 
             for (; i < word.Length; i++)
             {
-                if (IsConsonant(word[i]))
+                if (Letters.IsConsonant(word[i]))
                 {
                     return i + 1;
                 }
@@ -227,13 +217,13 @@ namespace Porter2StemmerStandard
             // a vowel at the beginning of the word followed by a non-vowel
             if (word.Length == 2)
             {
-                return IsVowel(word[0]) && IsConsonant(word[1]);
+                return Letters.IsVowel(word[0]) && Letters.IsConsonant(word[1]);
             }
 
-            return IsVowel(word[word.Length - 2])
-                   && IsConsonant(word[word.Length - 1])
+            return Letters.IsVowel(word[word.Length - 2])
+                   && Letters.IsConsonant(word[word.Length - 1])
                    && !_nonShortConsonants.Contains(word[word.Length - 1])
-                   && IsConsonant(word[word.Length - 3]);
+                   && Letters.IsConsonant(word[word.Length - 3]);
         }
 
         /// <summary>
@@ -271,7 +261,7 @@ namespace Porter2StemmerStandard
             return new string(chars);
         }
 
-        private static EndsWithContainer step0suffixes = new EndsWithContainer(new[] { "'s'", "'s", "'" });
+        private static readonly EndsWithContainer step0suffixes = new EndsWithContainer(new[] { "'s'", "'s", "'" });
         public string Step0RemoveSPluralSuffix(string word)
         {
             if (step0suffixes.TryFindLongestSuffix(word, out var suffix))
@@ -311,7 +301,7 @@ namespace Porter2StemmerStandard
                 // Skip both the last letter ('s') and the letter before that
                 for (var i = 0; i < word.Length - 2; i++)
                 {
-                    if (IsVowel(word[i]))
+                    if (Letters.IsVowel(word[i]))
                     {
                         return word.Substring(0, word.Length - 1);
                     }
@@ -337,7 +327,7 @@ namespace Porter2StemmerStandard
             if (step1Bsuffixes2.TryFindLongestSuffix(word, out suffix))
             {
                 var trunc = ReplaceSuffix(word, suffix);//word.Substring(0, word.Length - suffix.Length);
-                if (trunc.Any(IsVowel))
+                if (trunc.Any(Letters.IsVowel))
                 {
                     if (step1Bsuffixes3.EndsWithAny(trunc))
                     {
@@ -364,7 +354,7 @@ namespace Porter2StemmerStandard
             var last = word[word.Length - 1];
             if ((last == 'y' || last == 'Y')
                 && word.Length > 2
-                && IsConsonant(word[word.Length - 2]))
+                && Letters.IsConsonant(word[word.Length - 2]))
             {
                 return word.Substring(0, word.Length - 1) + "i";
             }
@@ -402,30 +392,33 @@ namespace Porter2StemmerStandard
             var length = word.Length;
 
             if (length < prefix.Length) return false;
-            switch (prefix.Length)
+            unchecked
             {
-                case 5:
-                    return word[length - 1] == prefix[4] &&
-                        word[length - 2] == prefix[3] &&
-                        word[length - 3] == prefix[2] &&
-                        word[length - 4] == prefix[1] &&
-                        word[length - 5] == prefix[0];
-                case 4:
-                    return word[length - 1] == prefix[3] &&
-                        word[length - 2] == prefix[2] &&
-                        word[length - 3] == prefix[1] &&
-                        word[length - 4] == prefix[0];
-                case 3:
-                    return word[length - 1] == prefix[2] &&
-                        word[length - 2] == prefix[1] &&
-                        word[length - 3] == prefix[0];
-                case 2:
-                    return word[length - 1] == prefix[1] &&
-                        word[length - 2] == prefix[0];
-                case 1:
-                    return word[length - 1] == prefix[0];
-                default:
-                    return word.EndsWith(prefix);
+                switch (prefix.Length)
+                {
+                    case 5:
+                        return word[length - 1] == prefix[4] &&
+                            word[length - 2] == prefix[3] &&
+                            word[length - 3] == prefix[2] &&
+                            word[length - 4] == prefix[1] &&
+                            word[length - 5] == prefix[0];
+                    case 4:
+                        return word[length - 1] == prefix[3] &&
+                            word[length - 2] == prefix[2] &&
+                            word[length - 3] == prefix[1] &&
+                            word[length - 4] == prefix[0];
+                    case 3:
+                        return word[length - 1] == prefix[2] &&
+                            word[length - 2] == prefix[1] &&
+                            word[length - 3] == prefix[0];
+                    case 2:
+                        return word[length - 1] == prefix[1] &&
+                            word[length - 2] == prefix[0];
+                    case 1:
+                        return word[length - 1] == prefix[0];
+                    default:
+                        return word.EndsWith(prefix);
+                }
             }
         }
 
@@ -493,7 +486,7 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        private static EndsWithContainer step4Suffixes = new EndsWithContainer(new[]
+        private static readonly EndsWithContainer step4Suffixes = new EndsWithContainer(new[]
         {
             "al", "ance", "ence", "er", "ic", "able", "ible", "ant",
             "ement", "ment", "ent", "ism", "ate", "iti", "ous",

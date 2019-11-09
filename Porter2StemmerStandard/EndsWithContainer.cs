@@ -33,15 +33,11 @@ namespace Porter2StemmerStandard
 
             for (var i = word.Length - 1; i >= 0; i--)
             {
-                if (!node.Nodes.TryGetValue(word[i], out node))
-                {
-                    break;
-                }
+                node = node.Children[word[i]];
 
-                if (node.Suffix != null)
-                {
-                    return true;
-                }
+                if (node == null) return false;
+
+                if (node.Fix != null) return true;
             }
 
             return false;
@@ -61,14 +57,13 @@ namespace Porter2StemmerStandard
 
             for (var i = word.Length - 1; i >= 0; i--)
             {
-                if (!node.Nodes.TryGetValue(word[i], out node))
-                {
-                    break;
-                }
+                node = node.Get(word[i]);
 
-                if (node.Suffix != null)
+                if (node == null) break;
+
+                if (node.Fix != null)
                 {
-                    suffix = node.Suffix;
+                    suffix = node.Fix;
                     value = node.Value;
                 }
             }
@@ -82,32 +77,31 @@ namespace Porter2StemmerStandard
 
             for (var i = key.Length - 1; i >= 0; i--)
             {
-                if (!node.Nodes.TryGetValue(key[i], out var nextNode))
+                var child = node.Children[key[i]];
+
+                if(child == null)
                 {
-                    nextNode = new LetterNode
-                    {
-                        Letter = key[i]
-                    };
-                    node.Nodes.Add(key[i], nextNode);
+                    child = new LetterNode();
+                    node.Children[key[i]] = child;
                 }
-                node = nextNode;
+                node = child;
             }
 
             if (node.Value != null) throw new ArgumentException($"Key '{key}' already in the collection");
 
             node.Value = value;
-            node.Suffix = key;
+            node.Fix = key;
         }
 
         private readonly LetterNode _root;
 
-        [DebuggerDisplay("Node {Letter} {Value}")]
-        private class LetterNode
-        {
-            public char Letter;
-            public Dictionary<char, LetterNode> Nodes = new Dictionary<char, LetterNode>();
-            public string Value;
-            public string Suffix;
-        }
+        //[DebuggerDisplay("Node {Letter} {Value}")]
+        //private class LetterNode
+        //{
+        //    public char Letter;
+        //    public Dictionary<char, LetterNode> Nodes = new Dictionary<char, LetterNode>();
+        //    public string Value;
+        //    public string Suffix;
+        //}
     }
 }
