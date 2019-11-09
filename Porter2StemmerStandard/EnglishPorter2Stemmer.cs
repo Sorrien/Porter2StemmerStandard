@@ -31,7 +31,7 @@ namespace Porter2StemmerStandard
 
         private readonly char[] _nonShortConsonants = "wxY".ToArray();
 
-        private readonly Dictionary<string, string> _exceptions = new Dictionary<string, string>
+        private readonly IsExactlyContainerLookup _exceptions = new IsExactlyContainerLookup( new Dictionary<string, string>
             {
                 {"skis", "ski"},
                 {"skies", "sky"},
@@ -51,13 +51,13 @@ namespace Porter2StemmerStandard
                 {"cosmos", "cosmos"},
                 {"bias", "bias"},
                 {"andes", "andes"}
-            };
+            } );
 
-        private readonly HashSet<string> _exceptionsPart2 = new HashSet<string>
+        private readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(new[]
             {
                 "inning", "outing", "canning", "herring", "earring",
                 "proceed", "exceed", "succeed"
-            };
+            });
 
         private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer(new[]
             {
@@ -74,8 +74,7 @@ namespace Porter2StemmerStandard
 
             word = TrimStartingApostrophe(word.ToLowerInvariant());
 
-            string excpt;
-            if (_exceptions.TryGetValue(word, out excpt))
+            if (_exceptions.TryGetValue(word, out string excpt))
             {
                 return new StemmedWord(excpt, original);
             }
@@ -181,19 +180,23 @@ namespace Porter2StemmerStandard
         private int GetRegion(string word, int begin)
         {
             var i = begin;
-            for (; i < word.Length; i++)
-            {
-                if (Letters.IsVowel(word[i]))
-                {
-                    break;
-                }
-            }
 
-            for (; i < word.Length; i++)
+            unchecked
             {
-                if (Letters.IsConsonant(word[i]))
+                for (; i < word.Length; i++)
                 {
-                    return i + 1;
+                    if (Letters.IsVowel(word[i]))
+                    {
+                        break;
+                    }
+                }
+
+                for (; i < word.Length; i++)
+                {
+                    if (Letters.IsConsonant(word[i]))
+                    {
+                        return i + 1;
+                    }
                 }
             }
 
@@ -253,7 +256,7 @@ namespace Porter2StemmerStandard
                         chars[i] = 'Y';
                     }
                 }
-                else if (chars[i] == 'y' && _vowels.Contains(chars[i - 1]))
+                else if (chars[i] == 'y' && Letters.IsVowel(chars[i - 1]))
                 {
                     chars[i] = 'Y';
                 }
@@ -273,7 +276,10 @@ namespace Porter2StemmerStandard
 
         public string Step1ARemoveOtherSPluralSuffixes(string word)
         {
-            if (!"sd".Contains(word[word.Length - 1])) return word;
+            var last = word[word.Length - 1];
+
+            if ('s' != last && 'd' != last) return word;
+            //if (!"sd".Contains(word[word.Length - 1])) return word;
             if (EndsWith(word, "sses"))
             {
                 return ReplaceSuffix(word, "sses", "ss");

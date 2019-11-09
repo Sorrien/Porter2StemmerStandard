@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace Porter2StemmerStandard
 {
@@ -22,17 +21,13 @@ namespace Porter2StemmerStandard
 
             prefix = default;
 
-            for (var i = 0; i < word.Length; i++)
+            foreach(var c in word)
             {
-                if (!node.Nodes.TryGetValue(word[i], out node))
-                {
-                    break;
-                }
+                node = node.Get(c);
 
-                if (node.Prefix != null)
-                {
-                    prefix = node.Prefix;
-                }
+                if (node == null) break;
+
+                if (node.Fix != null) prefix = node.Fix;
             }
 
             return prefix != default;
@@ -42,32 +37,23 @@ namespace Porter2StemmerStandard
         {
             var node = _root;
 
-            for (var i = 0; i < key.Length; i++)
+            foreach(var c in key)
             {
-                if (!node.Nodes.TryGetValue(key[i], out var nextNode))
+                var child = node.Children[c];
+
+                if(child == null)
                 {
-                    nextNode = new LetterNode
-                    {
-                        Letter = key[i]
-                    };
-                    node.Nodes.Add(key[i], nextNode);
+                    child = new LetterNode();
+                    node.Children[c] = child;
                 }
-                node = nextNode;
+                node = child;
             }
 
-            if (node.Prefix != null) throw new ArgumentException($"Key '{key}' already in the collection");
+            if (node.Fix != null) throw new ArgumentException($"Key '{key}' already in the collection");
 
-            node.Prefix = key;
+            node.Fix = key;
         }
 
         private readonly LetterNode _root;
-
-        [DebuggerDisplay("Node {Letter} {Value}")]
-        private class LetterNode
-        {
-            public char Letter;
-            public Dictionary<char, LetterNode> Nodes = new Dictionary<char, LetterNode>();
-            public string Prefix;
-        }
     }
 }

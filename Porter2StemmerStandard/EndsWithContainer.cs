@@ -57,7 +57,10 @@ namespace Porter2StemmerStandard
 
             for (var i = word.Length - 1; i >= 0; i--)
             {
-                node = node.Get(word[i]);
+                unchecked
+                {
+                    node = node.Get(word[i]);
+                }
 
                 if (node == null) break;
 

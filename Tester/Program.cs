@@ -30,7 +30,9 @@ namespace Tester
 
             var ct = 0;
 
-            for (var stupid = 0; stupid < 5; stupid++)
+            const int iterations = 5;
+
+            for (var stupid = 0; stupid < iterations; stupid++)
             {
                 foreach (var word in words)
                 {
@@ -38,9 +40,9 @@ namespace Tester
 
                     ct++;
 
-                    if (ct % 250_000 == 0)
+                    if (ct % 500_000 == 0)
                     {
-                        Console.WriteLine($"{ct:N0}/{words.Count:N0}");
+                        Console.WriteLine($"{ct:N0}/{words.Count * iterations:N0}");
                     }
                 }
             }
