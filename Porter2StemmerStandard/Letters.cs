@@ -8,7 +8,7 @@
         {
             _table = new bool['z' + 1];
 
-            foreach(var c in "aeiouy")
+            foreach (var c in "aeiouy")
             {
                 _table[c] = true;
             }
@@ -17,10 +17,7 @@
         public static bool IsVowel(char c)
         {
             if (c >= _table.Length) return false;
-            unchecked
-            {
-                return _table[c];
-            }
+            return _table[c];
         }
 
         public static bool IsConsonant(char c) => !IsVowel(c);

@@ -31,7 +31,7 @@ namespace Porter2StemmerStandard
 
         private readonly char[] _nonShortConsonants = "wxY".ToArray();
 
-        private readonly IsExactlyContainerLookup _exceptions = new IsExactlyContainerLookup( new Dictionary<string, string>
+        private readonly IsExactlyContainerLookup _exceptions = new IsExactlyContainerLookup(new Dictionary<string, string>
             {
                 {"skis", "ski"},
                 {"skies", "sky"},
@@ -51,7 +51,7 @@ namespace Porter2StemmerStandard
                 {"cosmos", "cosmos"},
                 {"bias", "bias"},
                 {"andes", "andes"}
-            } );
+            });
 
         private readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(new[]
             {
@@ -181,22 +181,19 @@ namespace Porter2StemmerStandard
         {
             var i = begin;
 
-            unchecked
+            for (; i < word.Length; i++)
             {
-                for (; i < word.Length; i++)
+                if (Letters.IsVowel(word[i]))
                 {
-                    if (Letters.IsVowel(word[i]))
-                    {
-                        break;
-                    }
+                    break;
                 }
+            }
 
-                for (; i < word.Length; i++)
+            for (; i < word.Length; i++)
+            {
+                if (Letters.IsConsonant(word[i]))
                 {
-                    if (Letters.IsConsonant(word[i]))
-                    {
-                        return i + 1;
-                    }
+                    return i + 1;
                 }
             }
 
@@ -398,33 +395,30 @@ namespace Porter2StemmerStandard
             var length = word.Length;
 
             if (length < prefix.Length) return false;
-            unchecked
+            switch (prefix.Length)
             {
-                switch (prefix.Length)
-                {
-                    case 5:
-                        return word[length - 1] == prefix[4] &&
-                            word[length - 2] == prefix[3] &&
-                            word[length - 3] == prefix[2] &&
-                            word[length - 4] == prefix[1] &&
-                            word[length - 5] == prefix[0];
-                    case 4:
-                        return word[length - 1] == prefix[3] &&
-                            word[length - 2] == prefix[2] &&
-                            word[length - 3] == prefix[1] &&
-                            word[length - 4] == prefix[0];
-                    case 3:
-                        return word[length - 1] == prefix[2] &&
-                            word[length - 2] == prefix[1] &&
-                            word[length - 3] == prefix[0];
-                    case 2:
-                        return word[length - 1] == prefix[1] &&
-                            word[length - 2] == prefix[0];
-                    case 1:
-                        return word[length - 1] == prefix[0];
-                    default:
-                        return word.EndsWith(prefix);
-                }
+                case 5:
+                    return word[length - 1] == prefix[4] &&
+                        word[length - 2] == prefix[3] &&
+                        word[length - 3] == prefix[2] &&
+                        word[length - 4] == prefix[1] &&
+                        word[length - 5] == prefix[0];
+                case 4:
+                    return word[length - 1] == prefix[3] &&
+                        word[length - 2] == prefix[2] &&
+                        word[length - 3] == prefix[1] &&
+                        word[length - 4] == prefix[0];
+                case 3:
+                    return word[length - 1] == prefix[2] &&
+                        word[length - 2] == prefix[1] &&
+                        word[length - 3] == prefix[0];
+                case 2:
+                    return word[length - 1] == prefix[1] &&
+                        word[length - 2] == prefix[0];
+                case 1:
+                    return word[length - 1] == prefix[0];
+                default:
+                    return word.EndsWith(prefix);
             }
         }
 

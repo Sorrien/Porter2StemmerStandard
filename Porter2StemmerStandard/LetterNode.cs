@@ -11,11 +11,7 @@
         public LetterNode Get(char c)
         {
             if (c >= TableSize) return null;
-
-            unchecked
-            {
-                return Children[c];
-            }
+            return Children[c];
         }
     }
 }
