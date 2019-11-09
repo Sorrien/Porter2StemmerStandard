@@ -6,31 +6,21 @@ namespace Porter2StemmerStandard
 {
     public class StartsWithContainer
     {
-        public StartsWithContainer(IReadOnlyDictionary<string, string> prefixMap)
-        {
-            _root = new LetterNode();
-
-            foreach (var kvp in prefixMap)
-            {
-                Insert(kvp.Key, kvp.Value);
-            }
-        }
-
         public StartsWithContainer(IEnumerable<string> prefixes)
         {
             _root = new LetterNode();
 
             foreach (var prefix in prefixes)
             {
-                Insert(prefix, null);
+                Insert(prefix);
             }
         }
 
-        public IReadOnlyList<(string Prefix, string Value)> Check(string word)
+        public bool TryFindLongestPrefix(string word, out string prefix)
         {
             var node = _root;
 
-            var matches = new List<(string Prefix, string Value)>();
+            prefix = default;
 
             for (var i = 0; i < word.Length; i++)
             {
@@ -41,16 +31,14 @@ namespace Porter2StemmerStandard
 
                 if (node.Prefix != null)
                 {
-                    matches.Add((node.Prefix, node.Value));
+                    prefix = node.Prefix;
                 }
             }
 
-            matches.Reverse();
-
-            return matches;
+            return prefix != default;
         }
 
-        private void Insert(string key, string value)
+        private void Insert(string key)
         {
             var node = _root;
 
@@ -67,9 +55,8 @@ namespace Porter2StemmerStandard
                 node = nextNode;
             }
 
-            if (node.Value != null) throw new ArgumentException($"Key '{key}' already in the collection");
+            if (node.Prefix != null) throw new ArgumentException($"Key '{key}' already in the collection");
 
-            node.Value = value;
             node.Prefix = key;
         }
 
@@ -80,7 +67,6 @@ namespace Porter2StemmerStandard
         {
             public char Letter;
             public Dictionary<char, LetterNode> Nodes = new Dictionary<char, LetterNode>();
-            public string Value;
             public string Prefix;
         }
     }

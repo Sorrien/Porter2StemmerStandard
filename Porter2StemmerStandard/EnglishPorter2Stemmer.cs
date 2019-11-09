@@ -168,7 +168,7 @@ namespace Porter2StemmerStandard
         public int GetRegion1(string word)
         {
             // Exceptional forms
-            foreach (var (except, _) in _exceptionsRegion1.Check(word))
+            if (_exceptionsRegion1.TryFindLongestPrefix(word, out var except))
             {
                 return except.Length;
             }
