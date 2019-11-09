@@ -12,9 +12,9 @@
 
             value = default;
 
-            for (var i = 0; i < word.Length; i++)
+            foreach(var c in word)
             {
-                node = node.Get(word[i]);
+                node = node.Get(c);
 
                 if (node == null) return false;
             }

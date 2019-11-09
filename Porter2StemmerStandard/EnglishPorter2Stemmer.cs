@@ -18,8 +18,8 @@ namespace Porter2StemmerStandard
                 .Concat(new[] { '\'' }).ToArray();
         public char[] Alphabet { get { return _alphabet; } }
 
-        private static readonly HashSet<char> _vowels = new HashSet<char>("aeiouy");
-        public char[] Vowels { get { return _vowels.ToArray(); } }
+        private static readonly char[] _vowels = "aeiouy".ToArray();
+        public char[] Vowels { get { return _vowels; } }
 
         private static readonly string[] _doubles =
             { "bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt" };
@@ -256,7 +256,7 @@ namespace Porter2StemmerStandard
             return new string(chars);
         }
 
-        private static readonly EndsWithContainer step0suffixes = new EndsWithContainer(new[] { "'s'", "'s", "'" });
+        private static readonly EndsWithContainer step0suffixes = new EndsWithContainer("'s'", "'s", "'");
         public string Step0RemoveSPluralSuffix(string word)
         {
             if (step0suffixes.TryFindLongestSuffix(word, out var suffix))
@@ -271,7 +271,6 @@ namespace Porter2StemmerStandard
             var last = word[word.Length - 1];
 
             if ('s' != last && 'd' != last) return word;
-            //if (!"sd".Contains(word[word.Length - 1])) return word;
             if (EndsWith(word, "sses"))
             {
                 return ReplaceSuffix(word, "sses", "ss");
@@ -308,9 +307,9 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        private static readonly EndsWithContainer step1Bsuffixes1 = new EndsWithContainer(new[] { "eedly", "eed" });
-        private static readonly EndsWithContainer step1Bsuffixes2 = new EndsWithContainer(new[] { "ed", "edly", "ing", "ingly" });
-        private static readonly EndsWithContainer step1Bsuffixes3 = new EndsWithContainer(new[] { "at", "bl", "iz" });
+        private static readonly EndsWithContainer step1Bsuffixes1 = new EndsWithContainer("eedly", "eed");
+        private static readonly EndsWithContainer step1Bsuffixes2 = new EndsWithContainer("ed", "edly", "ing", "ingly");
+        private static readonly EndsWithContainer step1Bsuffixes3 = new EndsWithContainer("at", "bl", "iz");
         public string Step1BRemoveLySuffixes(string word, int r1)
         {
             if (step1Bsuffixes1.TryFindLongestSuffix(word, out var suffix))
@@ -478,12 +477,10 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        private static readonly EndsWithContainer step4Suffixes = new EndsWithContainer(new[]
-        {
+        private static readonly EndsWithContainer step4Suffixes = new EndsWithContainer(
             "al", "ance", "ence", "er", "ic", "able", "ible", "ant",
             "ement", "ment", "ent", "ism", "ate", "iti", "ous",
-            "ive", "ize"
-        });
+            "ive", "ize");
         public string Step4RemoveSomeSuffixesInR2(string word, int r2)
         {
             if (step4Suffixes.TryFindLongestSuffix(word, out var suffix))
@@ -510,9 +507,9 @@ namespace Porter2StemmerStandard
 
             if (last == 'e')
             {
-                if ((SuffixInR2(word, r2, "e") ||
+                if (SuffixInR2(word, r2, "e") ||
                     (SuffixInR1(word, r1, "e") &&
-                        !EndsInShortSyllable(ReplaceSuffix(word, "e")))))
+                        !EndsInShortSyllable(ReplaceSuffix(word, "e"))))
                 {
                     return ReplaceSuffix(word, "e");
                 }
