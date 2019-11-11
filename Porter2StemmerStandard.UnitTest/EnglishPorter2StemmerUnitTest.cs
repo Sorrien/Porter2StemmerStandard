@@ -18,19 +18,26 @@ namespace Porter2StemmerStandard.UnitTest
 
         #region Test Stemming
 
-        [TestCaseSource(typeof(StemBatchTestCaseSource), "GetTestCaseData"), Test]
-        public void Stem_WithBatchData_StemsAllWordsCorrectly(BatchTestDataModel batchTestDataModel)
+        // using a TestCaseSource with this caused the VS test runner to die
+        // running all of these in one test takes < 500 ms
+        [Test]
+        public void Stem_WithBatchData_StemsAllWordsCorrectly()
         {
-            // Arrange
-            var stemmer = new EnglishPorter2Stemmer();
-            var unstemmed = batchTestDataModel.Unstemmed;
-            var expected = batchTestDataModel.Expected;
+            var tests = StemBatchTestCaseSource.GetTestCaseData();
 
-            // Act
-            var stemmed = stemmer.Stem(unstemmed).Value;
+            foreach (var batchTestDataModel in tests)
+            {
+                // Arrange
+                var stemmer = new EnglishPorter2Stemmer();
+                var unstemmed = batchTestDataModel.Unstemmed;
+                var expected = batchTestDataModel.Expected;
 
-            // Asssert
-            Assert.AreEqual(expected, stemmed);
+                // Act
+                var stemmed = stemmer.Stem(unstemmed).Value;
+
+                // Asssert
+                Assert.AreEqual(expected, stemmed);
+            }
         }
 
         #endregion
