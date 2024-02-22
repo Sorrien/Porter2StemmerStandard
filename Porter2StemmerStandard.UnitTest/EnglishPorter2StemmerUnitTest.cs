@@ -779,5 +779,18 @@ namespace Porter2StemmerStandard.UnitTest
         }
 
         #endregion
+
+        #region Does not crash for weird inputs
+
+        [TestCase("so´ping")]
+        [TestCase("roast’ed")]
+        public void DoesNotCrash(string input)
+        {
+            var stemmer = new EnglishPorter2Stemmer();
+
+            Assert.That(() => stemmer.Stem(input), Throws.Nothing);
+        }
+
+        #endregion
     }
 }
