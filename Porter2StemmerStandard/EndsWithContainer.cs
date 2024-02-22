@@ -18,7 +18,7 @@ namespace Porter2StemmerStandard
 
             for (var i = word.Length - 1; i >= 0; i--)
             {
-                node = node.Children[word[i]];
+                node = node.Get(word[i]);
 
                 if (node == null) return false;
 
