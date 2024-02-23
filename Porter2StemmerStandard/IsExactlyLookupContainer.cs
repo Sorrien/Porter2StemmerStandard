@@ -1,4 +1,6 @@
-﻿namespace Porter2StemmerStandard
+﻿using System;
+
+namespace Porter2StemmerStandard
 {
     public class IsExactlyLookupContainer : BTreeContainer
     {
@@ -6,7 +8,7 @@
         {
         }
 
-        public bool TryGetValue(string word, out string value)
+        public bool TryGetValue(ReadOnlySpan<char> word, out string value)
         {
             var node = _root;
 

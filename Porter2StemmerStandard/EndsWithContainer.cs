@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Porter2StemmerStandard
 {
@@ -12,7 +13,7 @@ namespace Porter2StemmerStandard
         {
         }
 
-        public bool EndsWithAny(string word)
+        public bool EndsWithAny(ReadOnlySpan<char> word)
         {
             var node = _root;
 
@@ -28,12 +29,12 @@ namespace Porter2StemmerStandard
             return false;
         }
 
-        public bool TryFindLongestSuffix(string word, out string suffix)
+        public bool TryFindLongestSuffix(ReadOnlySpan<char> word, out string suffix)
         {
             return TryFindLongestSuffixAndValue(word, out suffix, out var _);
         }
 
-        public bool TryFindLongestSuffixAndValue(string word, out string suffix, out string value)
+        public bool TryFindLongestSuffixAndValue(ReadOnlySpan<char> word, out string suffix, out string value)
         {
             var node = _root;
 

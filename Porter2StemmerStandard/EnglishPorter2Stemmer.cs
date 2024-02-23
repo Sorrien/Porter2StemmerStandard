@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Porter2StemmerStandard
@@ -11,27 +12,27 @@ namespace Porter2StemmerStandard
     public class EnglishPorter2Stemmer : IPorter2Stemmer
     {
 
-        private readonly char[] _alphabet =
+        private static readonly char[] _alphabet =
             Enumerable
                 .Range('a', 'z' - 'a' + 1)
                 .Select(c => (char)c)
                 .Concat(new[] { '\'' }).ToArray();
-        public char[] Alphabet { get { return _alphabet; } }
+        public ReadOnlySpan<char> Alphabet { get { return _alphabet; } }
 
         private static readonly char[] _vowels = "aeiouy".ToArray();
-        public char[] Vowels { get { return _vowels; } }
+        public ReadOnlySpan<char> Vowels { get { return _vowels; } }
 
         private static readonly string[] _doubles =
             { "bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt" };
         private static readonly EndsWithContainer _doublesEndsWith = new EndsWithContainer(_doubles);
-        public string[] Doubles { get { return _doubles; } }
+        public ReadOnlySpan<string> Doubles { get { return _doubles; } }
 
         private static readonly HashSet<char> _liEndings = new HashSet<char>("cdeghkmnrt");
-        public char[] LiEndings { get { return _liEndings.ToArray(); } }
+        public ReadOnlySpan<char> LiEndings { get { return _liEndings.ToArray(); } }
 
-        private readonly char[] _nonShortConsonants = "wxY".ToArray();
+        private static readonly char[] _nonShortConsonants = "wxY".ToArray();
 
-        private readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(
+        private static readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(
             ("skis", "ski"),
             ("skies", "sky"),
             ("dying", "die"),
@@ -52,83 +53,144 @@ namespace Porter2StemmerStandard
             ("andes", "andes")
         );
 
-        private readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(
+        private static readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(
             "inning", "outing", "canning", "herring", "earring",
             "proceed", "exceed", "succeed");
 
         private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer(
             "gener", "arsen", "commun");
 
+
+        /// <summary>
+        /// Stems a word, returning both the original word and the stem.
+        /// </summary>
         public StemmedWord Stem(string word)
         {
-            var original = word;
+            Span<char> buffer = stackalloc char[word.Length];
+            var length = ToLowerInvariant(word.AsSpan(), buffer);
+            var wordSpan = buffer.Slice(0, length);
+
+            StemInternal(ref wordSpan);
+            return new StemmedWord(wordSpan.ToString(), word);
+        }
+
+        private static int ToLowerInvariant(ReadOnlySpan<char> source, Span<char> destination)
+        {
+            // At least on .NET Framework, ToLowerInvariant allocates strings internally.
+            // return source.ToLowerInvariant(destination);
+            for (var i = 0; i < source.Length; i++)
+            {
+                destination[i] = char.ToLowerInvariant(source[i]);
+            }
+            return source.Length;
+        }
+
+        private static void ToLowerInvariant(Span<char> buffer)
+        {
+            for (var i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = char.ToLowerInvariant(buffer[i]);
+            }
+        }
+
+        /// <summary>
+        /// Stems a word, leaving the stem in the provided output buffer and
+        /// returning the relevant slice of that buffer.
+        /// </summary>
+        /// <param name="word">Input word to stem.</param>
+        /// <param name="output">Output buffer. Always modified. Must be large enough to hold <paramref name="word"/>.</param>
+        /// <returns>The slice of the output buffer which contains the stemmed word.</returns>
+        public ReadOnlySpan<char> Stem(ReadOnlySpan<char> word, Span<char> output)
+        {
+            if (output.Length < word.Length) throw new ArgumentException("Output buffer must be large enough to contain the entire word.");
+
+            ToLowerInvariant(word, output);
+
+            var wordSpan = output.Slice(0, word.Length);
+            StemInternal(ref wordSpan);
+            return wordSpan;
+        }
+
+        private void StemInternal(ref Span<char> word)
+        {
             if (word.Length <= 2)
             {
-                return new StemmedWord(word, word);
+                return;
             }
 
-            word = TrimStartingApostrophe(word.ToLowerInvariant());
+            TrimStartingApostrophe(ref word);
 
             if (_exceptions.TryGetValue(word, out string excpt))
             {
-                return new StemmedWord(excpt, original);
+                excpt.AsSpan().CopyTo(word);
+                word = word.Slice(0, excpt.Length);
+                return;
             }
 
-            word = MarkYsAsConsonants(word);
+            MarkYsAsConsonants(word);
 
             var r1 = GetRegion1(word);
             var r2 = GetRegion(word, r1);
 
-            word = Step0RemoveSPluralSuffix(word);
-            word = Step1ARemoveOtherSPluralSuffixes(word);
+            Step0RemoveSPluralSuffix(ref word);
+            Step1ARemoveOtherSPluralSuffixes(ref word);
 
             if (_exceptionsPart2.Contains(word))
             {
-                return new StemmedWord(word, original);
+                ToLowerInvariant(word);
+                return;
             }
 
-            word = Step1BRemoveLySuffixes(word, r1);
-            word = Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
-            word = Step2ReplaceSuffixes(word, r1);
-            word = Step3ReplaceSuffixes(word, r1, r2);
-            word = Step4RemoveSomeSuffixesInR2(word, r2);
-            word = Step5RemoveEorLSuffixes(word, r1, r2);
-
-            return new StemmedWord(word.ToLowerInvariant(), original);
+            Step1BRemoveLySuffixes(ref word, r1);
+            Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
+            Step2ReplaceSuffixes(ref word, r1);
+            Step3ReplaceSuffixes(ref word, r1, r2);
+            Step4RemoveSomeSuffixesInR2(ref word, r2);
+            Step5RemoveEorLSuffixes(ref word, r1, r2);
+            ToLowerInvariant(word);
         }
 
-        private static bool SuffixInR1(string word, int r1, string suffix)
+        private static bool SuffixInR1(ReadOnlySpan<char> word, int r1, string suffix)
         {
             return r1 <= word.Length - suffix.Length;
         }
 
-        private bool SuffixInR2(string word, int r2, string suffix)
+        private static bool SuffixInR2(ReadOnlySpan<char> word, int r2, string suffix)
         {
             return r2 <= word.Length - suffix.Length;
         }
 
-        private static string ReplaceSuffix(string word, string oldSuffix, string newSuffix = null)
+        private static Span<char> RemoveSuffix(Span<char> word, ReadOnlySpan<char> oldSuffix)
         {
-            if (oldSuffix != null)
-            {
-                word = word.Substring(0, word.Length - oldSuffix.Length);
-            }
-
-            if (newSuffix != null)
-            {
-                word += newSuffix;
-            }
-            return word;
+            return word.Slice(0, word.Length - oldSuffix.Length);
         }
 
-        private static bool TryReplace(string word, string oldSuffix, string newSuffix, out string final)
+        private static void ReplaceWithShorterSuffix(ref Span<char> word, ReadOnlySpan<char> oldSuffix, ReadOnlySpan<char> newSuffix)
         {
-            if (word.Contains(oldSuffix))
+            Debug.Assert(newSuffix.Length <= oldSuffix.Length);
+
+            var lengthWithoutSuffix = word.Length - oldSuffix.Length;
+            word = word.Slice(0, lengthWithoutSuffix + newSuffix.Length);
+
+            newSuffix.CopyTo(word.Slice(lengthWithoutSuffix));
+        }
+
+        private static bool TryReplaceWithShorterSuffix(ref Span<char> word, ReadOnlySpan<char> oldSuffix, ReadOnlySpan<char> newSuffix)
+        {
+            if (MemoryExtensions.Contains(word, oldSuffix, StringComparison.Ordinal))
             {
-                final = ReplaceSuffix(word, oldSuffix, newSuffix);
+                ReplaceWithShorterSuffix(ref word, oldSuffix, newSuffix);
                 return true;
             }
-            final = word;
+            return false;
+        }
+
+        private static bool AnyVowels(ReadOnlySpan<char> chars)
+        {
+            foreach (var c in chars)
+            {
+                if (Letters.IsVowel(c)) return true;
+            }
             return false;
         }
 
@@ -137,13 +199,12 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        private static string TrimStartingApostrophe(string word)
+        private static void TrimStartingApostrophe(ref Span<char> word)
         {
             if (word[0] == '\'')
             {
-                word = word.Substring(1);
+                word = word.Slice(1);
             }
-            return word;
         }
 
         /// <summary>
@@ -151,7 +212,7 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public int GetRegion1(string word)
+        public int GetRegion1(ReadOnlySpan<char> word)
         {
             // Exceptional forms
             if (_exceptionsRegion1.TryFindLongestPrefix(word, out var except))
@@ -166,13 +227,13 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public int GetRegion2(string word)
+        public int GetRegion2(ReadOnlySpan<char> word)
         {
             var r1 = GetRegion1(word);
             return GetRegion(word, r1);
         }
 
-        private int GetRegion(string word, int begin)
+        private int GetRegion(ReadOnlySpan<char> word, int begin)
         {
             var i = begin;
 
@@ -202,7 +263,7 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public bool EndsInShortSyllable(string word)
+        internal static bool EndsInShortSyllable(ReadOnlySpan<char> word)
         {
             if (word.Length < 2)
             {
@@ -226,7 +287,7 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public bool IsShortWord(string word)
+        internal bool IsShortWord(ReadOnlySpan<char> word)
         {
             return EndsInShortSyllable(word) && GetRegion1(word) == word.Length;
         }
@@ -236,126 +297,128 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public string MarkYsAsConsonants(string word)
+        internal static void MarkYsAsConsonants(Span<char> word)
         {
-            var chars = word.ToCharArray();
-            for (var i = 0; i < chars.Length; i++)
+            for (var i = 0; i < word.Length; i++)
             {
                 if (i == 0)
                 {
-                    if (chars[i] == 'y')
+                    if (word[i] == 'y')
                     {
-                        chars[i] = 'Y';
+                        word[i] = 'Y';
                     }
                 }
-                else if (chars[i] == 'y' && Letters.IsVowel(chars[i - 1]))
+                else if (word[i] == 'y' && Letters.IsVowel(word[i - 1]))
                 {
-                    chars[i] = 'Y';
+                    word[i] = 'Y';
                 }
             }
-            return new string(chars);
         }
 
         private static readonly EndsWithContainer step0suffixes = new EndsWithContainer("'s'", "'s", "'");
-        public string Step0RemoveSPluralSuffix(string word)
+        internal static void Step0RemoveSPluralSuffix(ref Span<char> word)
         {
             if (step0suffixes.TryFindLongestSuffix(word, out var suffix))
             {
-                return ReplaceSuffix(word, suffix);
+                word = RemoveSuffix(word, suffix.AsSpan());
             }
-            return word;
         }
 
-        public string Step1ARemoveOtherSPluralSuffixes(string word)
+        internal static void Step1ARemoveOtherSPluralSuffixes(ref Span<char> word)
         {
             var last = word[word.Length - 1];
 
-            if ('s' != last && 'd' != last) return word;
+            if ('s' != last && 'd' != last) return;
             if (EndsWith(word, "sses"))
             {
-                return ReplaceSuffix(word, "sses", "ss");
+                ReplaceWithShorterSuffix(ref word, "sses".AsSpan(), "ss".AsSpan());
+                return;
             }
             if (EndsWith(word, "ied") || EndsWith(word, "ies"))
             {
-                var restOfWord = word.Substring(0, word.Length - 3);
+                // In both cases we're merely shortening the word, so reuse the buffer.
                 if (word.Length > 4)
                 {
-                    return restOfWord + "i";
+                    // Trim 'ed'/'es'.
+                    word = word.Slice(0, word.Length - 2);
+                    return;
                 }
-                return restOfWord + "ie";
+                // Trim 'd'/'s'.
+                word = word.Slice(0, word.Length - 1);
+                return;
             }
             if (EndsWith(word, "us") || EndsWith(word, "ss"))
             {
-                return word;
+                return;
             }
             if (EndsWith(word, "s"))
             {
                 if (word.Length < 3)
                 {
-                    return word;
+                    return;
                 }
 
                 // Skip both the last letter ('s') and the letter before that
-                for (var i = 0; i < word.Length - 2; i++)
+                foreach (var c in word.Slice(0, word.Length - 2))
                 {
-                    if (Letters.IsVowel(word[i]))
+                    if (Letters.IsVowel(c))
                     {
-                        return word.Substring(0, word.Length - 1);
+                        word = word.Slice(0, word.Length - 1);
+                        return;
                     }
                 }
             }
-            return word;
         }
 
         private static readonly EndsWithContainer step1Bsuffixes1 = new EndsWithContainer("eedly", "eed");
         private static readonly EndsWithContainer step1Bsuffixes2 = new EndsWithContainer("ed", "edly", "ing", "ingly");
         private static readonly EndsWithContainer step1Bsuffixes3 = new EndsWithContainer("at", "bl", "iz");
-        public string Step1BRemoveLySuffixes(string word, int r1)
+        internal void Step1BRemoveLySuffixes(ref Span<char> word, int r1)
         {
             if (step1Bsuffixes1.TryFindLongestSuffix(word, out var suffix))
             {
                 if (SuffixInR1(word, r1, suffix))
                 {
-                    return ReplaceSuffix(word, suffix, "ee");
+                    ReplaceWithShorterSuffix(ref word, suffix.AsSpan(), "ee".AsSpan());
                 }
-                return word;
+                return;
             }
 
             if (step1Bsuffixes2.TryFindLongestSuffix(word, out suffix))
             {
-                var trunc = ReplaceSuffix(word, suffix);//word.Substring(0, word.Length - suffix.Length);
-                if (trunc.Any(Letters.IsVowel))
+                var trunc = RemoveSuffix(word, suffix.AsSpan());
+                if (AnyVowels(trunc))
                 {
                     if (step1Bsuffixes3.EndsWithAny(trunc))
                     {
-                        return trunc + "e";
+                        ReplaceWithShorterSuffix(ref word, suffix.AsSpan(), "e".AsSpan());
+                        return;
                     }
                     if (_doublesEndsWith.EndsWithAny(trunc))
                     {
-                        return trunc.Substring(0, trunc.Length - 1);
+                        word = trunc.Slice(0, trunc.Length - 1);
+                        return;
                     }
                     if (IsShortWord(trunc))
                     {
-                        return trunc + "e";
+                        ReplaceWithShorterSuffix(ref word, suffix.AsSpan(), "e".AsSpan());
+                        return;
                     }
-                    return trunc;
+                    word = trunc;
                 }
-                return word;
             }
-
-            return word;
         }
 
-        public string Step1CReplaceSuffixYWithIIfPreceededWithConsonant(string word)
+        internal static void Step1CReplaceSuffixYWithIIfPreceededWithConsonant(Span<char> word)
         {
             var last = word[word.Length - 1];
             if ((last == 'y' || last == 'Y')
                 && word.Length > 2
                 && Letters.IsConsonant(word[word.Length - 2]))
             {
-                return word.Substring(0, word.Length - 1) + "i";
+                // Replacing last character. Buffer is large enough, so do it in-place.
+                word[word.Length - 1] = 'i';
             }
-            return word;
         }
 
         private static readonly EndsWithContainer step2Suffixes = new EndsWithContainer(
@@ -382,7 +445,7 @@ namespace Porter2StemmerStandard
             ("alli", "al"),
             ("bli", "ble"));
 
-        private static bool EndsWith(string word, string prefix)
+        private static bool EndsWith(ReadOnlySpan<char> word, string prefix)
         {
             var length = word.Length;
 
@@ -410,20 +473,19 @@ namespace Porter2StemmerStandard
                 case 1:
                     return word[length - 1] == prefix[0];
                 default:
-                    return word.EndsWith(prefix);
+                    return word.EndsWith(prefix.AsSpan());
             }
         }
 
-        public string Step2ReplaceSuffixes(string word, int r1)
+        internal static void Step2ReplaceSuffixes(ref Span<char> word, int r1)
         {
             if (step2Suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
             {
-                if (SuffixInR1(word, r1, suffix)
-                    && TryReplace(word, suffix, value, out var final))
+                if (SuffixInR1(word, r1, suffix))
                 {
-                    return final;
+                    TryReplaceWithShorterSuffix(ref word, suffix.AsSpan(), value.AsSpan());
                 }
-                return word;
+                return;
             }
 
             if (EndsWith(word, "ogi"))
@@ -431,18 +493,18 @@ namespace Porter2StemmerStandard
                 if (SuffixInR1(word, r1, "ogi")
                    && word[word.Length - 4] == 'l')
                 {
-                    return ReplaceSuffix(word, "ogi", "og");
+                    ReplaceWithShorterSuffix(ref word, "ogi".AsSpan(), "og".AsSpan());
+                    return;
                 }
             }
             else if (EndsWith(word, "li") & SuffixInR1(word, r1, "li"))
             {
                 if (_liEndings.Contains(word[word.Length - 3]))
                 {
-                    return ReplaceSuffix(word, "li");
+                    word = RemoveSuffix(word, "li".AsSpan());
+                    return;
                 }
             }
-
-            return word;
         }
 
         private static readonly EndsWithContainer step3suffixes = new EndsWithContainer(
@@ -455,14 +517,14 @@ namespace Porter2StemmerStandard
             ("ful", null),
             ("ness", null)
         );
-        public string Step3ReplaceSuffixes(string word, int r1, int r2)
+        internal static void Step3ReplaceSuffixes(ref Span<char> word, int r1, int r2)
         {
             if (step3suffixes.TryFindLongestSuffixAndValue(word, out var suffix, out var value))
             {
                 if (SuffixInR1(word, r1, suffix)
-                    && TryReplace(word, suffix, value, out string final))
+                    && TryReplaceWithShorterSuffix(ref word, suffix.AsSpan(), value.AsSpan()))
                 {
-                    return final;
+                    return;
                 }
             }
 
@@ -470,48 +532,57 @@ namespace Porter2StemmerStandard
             {
                 if (SuffixInR1(word, r1, "ative") && SuffixInR2(word, r2, "ative"))
                 {
-                    return ReplaceSuffix(word, "ative", null);
+                    word = RemoveSuffix(word, "ative".AsSpan());
+                    return;
                 }
             }
-
-            return word;
         }
 
         private static readonly EndsWithContainer step4Suffixes = new EndsWithContainer(
             "al", "ance", "ence", "er", "ic", "able", "ible", "ant",
             "ement", "ment", "ent", "ism", "ate", "iti", "ous",
             "ive", "ize");
-        public string Step4RemoveSomeSuffixesInR2(string word, int r2)
+        internal static void Step4RemoveSomeSuffixesInR2(ref Span<char> word, int r2)
         {
             if (step4Suffixes.TryFindLongestSuffix(word, out var suffix))
             {
                 if (SuffixInR2(word, r2, suffix))
                 {
-                    return ReplaceSuffix(word, suffix);
+                    word = RemoveSuffix(word, suffix.AsSpan());
                 }
-                return word;
+                return;
             }
 
             if (EndsWith(word, "ion") &&
-                SuffixInR2(word, r2, "ion") &&
-                "st".Contains(word[word.Length - 4]))
+                SuffixInR2(word, r2, "ion"))
             {
-                return ReplaceSuffix(word, "ion");
+                var c = word[word.Length - 4];
+                if (c == 's' || c == 't')
+                {
+                    word = RemoveSuffix(word, "ion".AsSpan());
+                }
             }
-            return word;
         }
 
-        public string Step5RemoveEorLSuffixes(string word, int r1, int r2)
+        internal static void Step5RemoveEorLSuffixes(ref Span<char> word, int r1, int r2)
         {
             var last = word[word.Length - 1];
 
             if (last == 'e')
             {
-                if (SuffixInR2(word, r2, "e") ||
-                    (SuffixInR1(word, r1, "e") &&
-                        !EndsInShortSyllable(ReplaceSuffix(word, "e"))))
+                if (SuffixInR2(word, r2, "e"))
                 {
-                    return ReplaceSuffix(word, "e");
+                    word = RemoveSuffix(word, "e".AsSpan());
+                    return;
+                }
+                if (SuffixInR1(word, r1, "e"))
+                {
+                    var temp = RemoveSuffix(word, "e".AsSpan());
+                    if (!EndsInShortSyllable(temp))
+                    {
+                        word = temp;
+                        return;
+                    }
                 }
             }
             else if (last == 'l' &&
@@ -519,10 +590,9 @@ namespace Porter2StemmerStandard
                 word.Length > 1 &&
                 word[word.Length - 2] == 'l')
             {
-                return ReplaceSuffix(word, "l");
+                word = RemoveSuffix(word, "l".AsSpan());
             }
-
-            return word;
         }
+
     }
 }

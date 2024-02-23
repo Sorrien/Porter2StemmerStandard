@@ -1,4 +1,6 @@
-﻿namespace Porter2StemmerStandard
+﻿using System;
+
+namespace Porter2StemmerStandard
 {
     public class IsExactlyContainer : BTreeContainer
     {
@@ -6,13 +8,13 @@
         {
         }
 
-        public bool Contains(string word)
+        public bool Contains(ReadOnlySpan<char> word)
         {
             var node = _root;
 
-            for (var i = 0; i < word.Length; i++)
+            foreach (var c in word)
             {
-                node = node.Get(word[i]);
+                node = node.Get(c);
 
                 if (node == null) return false;
             }

@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Porter2StemmerStandard.UnitTest
@@ -20,7 +21,7 @@ namespace Porter2StemmerStandard.UnitTest
                 ("iciti", "ic"),
                 ("ical", "ic"));
 
-            var actual = target.TryFindLongestSuffixAndValue(word, out var _, out var value);
+            var actual = target.TryFindLongestSuffixAndValue(word.AsSpan(), out var _, out var value);
 
             Assert.IsTrue(actual);
 
@@ -41,7 +42,7 @@ namespace Porter2StemmerStandard.UnitTest
                 ("iciti", "ic"),
                 ("ical", "ic"));
 
-            var actual = target.TryFindLongestSuffixAndValue(word, out var suffix, out var value);
+            var actual = target.TryFindLongestSuffixAndValue(word.AsSpan(), out var suffix, out var value);
 
             Assert.IsFalse(actual);
             Assert.IsNull(suffix);
@@ -65,7 +66,7 @@ namespace Porter2StemmerStandard.UnitTest
                 "iciti",
                 "ical");
 
-            var actual = target.EndsWithAny(word);
+            var actual = target.EndsWithAny(word.AsSpan());
 
             Assert.AreEqual(expected, actual);
         }

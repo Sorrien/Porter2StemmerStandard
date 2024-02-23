@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 using System.Collections.Generic;
 
 namespace Porter2StemmerStandard.UnitTest
@@ -14,7 +15,7 @@ namespace Porter2StemmerStandard.UnitTest
                 ( "xyz", "zzz" )
             );
 
-            var actual = target.TryGetValue("abc", out var actualValue);
+            var actual = target.TryGetValue("abc".AsSpan(), out var actualValue);
 
             Assert.True(actual);
 
@@ -32,7 +33,7 @@ namespace Porter2StemmerStandard.UnitTest
                 ( "xyz", "zzz" )
             );
 
-            var actual = target.TryGetValue(word, out var actualValue);
+            var actual = target.TryGetValue(word.AsSpan(), out var actualValue);
 
             Assert.IsFalse(actual);
             Assert.IsNull(actualValue);
