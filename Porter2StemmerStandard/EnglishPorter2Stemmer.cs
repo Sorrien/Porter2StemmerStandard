@@ -60,6 +60,10 @@ namespace Porter2StemmerStandard
         private static readonly StartsWithContainer _exceptionsRegion1 = new StartsWithContainer(
             "gener", "arsen", "commun");
 
+
+        /// <summary>
+        /// Stems a word, returning both the original word and the stem.
+        /// </summary>
         public StemmedWord Stem(string word)
         {
             Span<char> buffer = stackalloc char[word.Length];
@@ -87,6 +91,24 @@ namespace Porter2StemmerStandard
             {
                 buffer[i] = char.ToLowerInvariant(buffer[i]);
             }
+        }
+
+        /// <summary>
+        /// Stems a word, leaving the stem in the provided output buffer and
+        /// returning the relevant slice of that buffer.
+        /// </summary>
+        /// <param name="word">Input word to stem.</param>
+        /// <param name="output">Output buffer. Always modified. Must be large enough to hold <paramref name="word"/>.</param>
+        /// <returns>The slice of the output buffer which contains the stemmed word.</returns>
+        public ReadOnlySpan<char> Stem(ReadOnlySpan<char> word, Span<char> output)
+        {
+            if (output.Length < word.Length) throw new ArgumentException("Output buffer must be large enough to contain the entire word.");
+
+            ToLowerInvariant(word, output);
+
+            var wordSpan = output.Slice(0, word.Length);
+            StemInternal(ref wordSpan);
+            return wordSpan;
         }
 
         private void StemInternal(ref Span<char> word)

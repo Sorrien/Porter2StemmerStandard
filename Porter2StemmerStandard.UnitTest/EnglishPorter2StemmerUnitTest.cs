@@ -41,6 +41,27 @@ namespace Porter2StemmerStandard.UnitTest
             }
         }
 
+        [Test]
+        public void Stem_WithoutAllocation_WithBatchData_StemsAllWordsCorrectly()
+        {
+            var tests = StemBatchTestCaseSource.GetTestCaseData();
+
+            foreach (var batchTestDataModel in tests)
+            {
+                // Arrange
+                var stemmer = new EnglishPorter2Stemmer();
+                var unstemmed = batchTestDataModel.Unstemmed;
+                var expected = batchTestDataModel.Expected;
+
+                // Act
+                var buffer = new char[unstemmed.Length];
+                var stemmed = stemmer.Stem(unstemmed.AsSpan(), buffer);
+
+                // Assert
+                Assert.AreEqual(expected, stemmed.ToString());
+            }
+        }
+
         #endregion
 
         #region Test Regions
