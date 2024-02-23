@@ -138,10 +138,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "rap";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -152,10 +151,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "trap";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -166,10 +164,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "entrap";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -180,10 +177,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "ow";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -194,10 +190,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "on";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -208,10 +203,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "at";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -222,10 +216,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "uproot";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -236,10 +229,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "bestow";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -250,10 +242,9 @@ namespace Porter2StemmerStandard.UnitTest
         {
             // Arrange
             const string word = "disturb";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
+            var actual = EnglishPorter2Stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -351,10 +342,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithInitialY_MarksYAsConsonant()
         {
             const string word = "youth";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("Youth", actual);
@@ -364,10 +354,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithYAfterVowel_MarksYAsConsonant()
         {
             const string word = "boy";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("boY", actual);
@@ -377,10 +366,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithYBetweenTwoVowels_MarksYAsConsonant()
         {
             const string word = "boyish";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("boYish", actual);
@@ -390,10 +378,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithYAfterConsonant_DoesNotMarkYAsConsonant()
         {
             const string word = "fly";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("fly", actual);
@@ -403,10 +390,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithVowelOnlyFollowingY_DoesNotMarkYAsConsonant()
         {
             const string word = "flying";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("flying", actual);
@@ -416,10 +402,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithNoVowelsButY_DoesNotMarkAnyYAsConsonant()
         {
             const string word = "syzygy";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("syzygy", actual);
@@ -429,10 +414,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void MarkVowelsAsConsonants_WithDoubledY_MarksFirstButNotSecondYAsConsonant()
         {
             const string word = "sayyid";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.MarkYsAsConsonants(word);
+            var actual = EnglishPorter2Stemmer.MarkYsAsConsonants(word);
 
             // Assert
             Assert.AreEqual("saYyid", actual);
@@ -446,10 +430,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveSPluralSuffix_WithWordEndingInApostrophe_RemovesSuffix()
         {
             const string word = "holy'";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step0RemoveSPluralSuffix(word);
+            var actual = EnglishPorter2Stemmer.Step0RemoveSPluralSuffix(word);
 
             // Assert
             Assert.AreEqual("holy", actual);
@@ -459,10 +442,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveSPluralSuffix_WithWordEndingInApostropheS_RemovesSuffix()
         {
             const string word = "holy's";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step0RemoveSPluralSuffix(word);
+            var actual = EnglishPorter2Stemmer.Step0RemoveSPluralSuffix(word);
 
             // Assert
             Assert.AreEqual("holy", actual);
@@ -472,10 +454,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveSPluralSuffix_WithWordEndingInApostropheSApostrophe_RemovesSuffix()
         {
             const string word = "holy's'";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step0RemoveSPluralSuffix(word);
+            var actual = EnglishPorter2Stemmer.Step0RemoveSPluralSuffix(word);
 
             // Assert
             Assert.AreEqual("holy", actual);
@@ -489,10 +470,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_WithWordEndingInSses_ReplaceWithSs()
         {
             const string word = "assesses";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("assess", actual);
@@ -502,10 +482,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_WithLongWordEndingInIes_ReplaceWithI()
         {
             const string word = "cries";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("cri", actual);
@@ -515,10 +494,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_WithShortWordEndingInIes_ReplaceWithIe()
         {
             const string word = "ties";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("tie", actual);
@@ -528,10 +506,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_WithLongWordEndingInIed_ReplaceWithI()
         {
             const string word = "cried";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("cri", actual);
@@ -541,10 +518,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_WithShortWordEndingInIed_ReplaceWithIe()
         {
             const string word = "tied";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("tie", actual);
@@ -554,10 +530,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_EndingInSAndContainingAVowelRightBefore_LeavesTheS()
         {
             const string word = "gas";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("gas", actual);
@@ -567,10 +542,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_EndingInSAndContainingAVowelEarlierInWord_DeletesTheS()
         {
             const string word = "gaps";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("gap", actual);
@@ -580,10 +554,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_EndingInSAndContainingAVowelRightBeforeAndEarlierInWord_DeletesTheS()
         {
             const string word = "kiwis";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("kiwi", actual);
@@ -593,10 +566,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_EndingInSs_LeavesWordAlone()
         {
             const string word = "assess";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("assess", actual);
@@ -606,10 +578,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void RemoveOtherSPluralSuffix_EndingInUs_LeavesWordAlone()
         {
             const string word = "consensus";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1ARemoveOtherSPluralSuffixes(word);
+            var actual = EnglishPorter2Stemmer.Step1ARemoveOtherSPluralSuffixes(word);
 
             // Assert
             Assert.AreEqual("consensus", actual);
@@ -744,10 +715,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void ReplaceYSuffix_PreceededByConsonant_ReplacesSuffixWithI()
         {
             const string word = "cry";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
+            var actual = EnglishPorter2Stemmer.Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
 
             // Assert
             Assert.AreEqual("cri", actual);
@@ -757,10 +727,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void ReplaceYSuffix_PreceededByConsonantAsFirstLetterOfWord_DoesNotReplaceSuffix()
         {
             const string word = "by";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
+            var actual = EnglishPorter2Stemmer.Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
 
             // Assert
             Assert.AreEqual("by", actual);
@@ -770,10 +739,9 @@ namespace Porter2StemmerStandard.UnitTest
         public void ReplaceYSuffix_NotPreceededyConsonant_DoesNotReplaceSuffix()
         {
             const string word = "say";
-            var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
+            var actual = EnglishPorter2Stemmer.Step1CReplaceSuffixYWithIIfPreceededWithConsonant(word);
 
             // Assert
             Assert.AreEqual("say", actual);

@@ -102,7 +102,7 @@ namespace Porter2StemmerStandard
             return r1 <= word.Length - suffix.Length;
         }
 
-        private bool SuffixInR2(string word, int r2, string suffix)
+        private static bool SuffixInR2(string word, int r2, string suffix)
         {
             return r2 <= word.Length - suffix.Length;
         }
@@ -202,7 +202,7 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public bool EndsInShortSyllable(ReadOnlySpan<char> word)
+        internal static bool EndsInShortSyllable(ReadOnlySpan<char> word)
         {
             if (word.Length < 2)
             {
@@ -226,7 +226,7 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public bool IsShortWord(ReadOnlySpan<char> word)
+        internal bool IsShortWord(ReadOnlySpan<char> word)
         {
             return EndsInShortSyllable(word) && GetRegion1(word) == word.Length;
         }
@@ -236,7 +236,7 @@ namespace Porter2StemmerStandard
         /// </summary>
         /// <param name="word"></param>
         /// <returns></returns>
-        public string MarkYsAsConsonants(string word)
+        internal static string MarkYsAsConsonants(string word)
         {
             var chars = word.ToCharArray();
             for (var i = 0; i < chars.Length; i++)
@@ -257,7 +257,7 @@ namespace Porter2StemmerStandard
         }
 
         private static readonly EndsWithContainer step0suffixes = new EndsWithContainer("'s'", "'s", "'");
-        public string Step0RemoveSPluralSuffix(string word)
+        internal static string Step0RemoveSPluralSuffix(string word)
         {
             if (step0suffixes.TryFindLongestSuffix(word.AsSpan(), out var suffix))
             {
@@ -266,7 +266,7 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        public string Step1ARemoveOtherSPluralSuffixes(string word)
+        internal static string Step1ARemoveOtherSPluralSuffixes(string word)
         {
             var last = word[word.Length - 1];
 
@@ -310,7 +310,7 @@ namespace Porter2StemmerStandard
         private static readonly EndsWithContainer step1Bsuffixes1 = new EndsWithContainer("eedly", "eed");
         private static readonly EndsWithContainer step1Bsuffixes2 = new EndsWithContainer("ed", "edly", "ing", "ingly");
         private static readonly EndsWithContainer step1Bsuffixes3 = new EndsWithContainer("at", "bl", "iz");
-        public string Step1BRemoveLySuffixes(string word, int r1)
+        internal string Step1BRemoveLySuffixes(string word, int r1)
         {
             if (step1Bsuffixes1.TryFindLongestSuffix(word.AsSpan(), out var suffix))
             {
@@ -346,7 +346,7 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        public string Step1CReplaceSuffixYWithIIfPreceededWithConsonant(string word)
+        internal static string Step1CReplaceSuffixYWithIIfPreceededWithConsonant(string word)
         {
             var last = word[word.Length - 1];
             if ((last == 'y' || last == 'Y')
@@ -414,7 +414,7 @@ namespace Porter2StemmerStandard
             }
         }
 
-        public string Step2ReplaceSuffixes(string word, int r1)
+        internal static string Step2ReplaceSuffixes(string word, int r1)
         {
             if (step2Suffixes.TryFindLongestSuffixAndValue(word.AsSpan(), out var suffix, out var value))
             {
@@ -455,7 +455,7 @@ namespace Porter2StemmerStandard
             ("ful", null),
             ("ness", null)
         );
-        public string Step3ReplaceSuffixes(string word, int r1, int r2)
+        internal static string Step3ReplaceSuffixes(string word, int r1, int r2)
         {
             if (step3suffixes.TryFindLongestSuffixAndValue(word.AsSpan(), out var suffix, out var value))
             {
@@ -481,7 +481,7 @@ namespace Porter2StemmerStandard
             "al", "ance", "ence", "er", "ic", "able", "ible", "ant",
             "ement", "ment", "ent", "ism", "ate", "iti", "ous",
             "ive", "ize");
-        public string Step4RemoveSomeSuffixesInR2(string word, int r2)
+        internal static string Step4RemoveSomeSuffixesInR2(string word, int r2)
         {
             if (step4Suffixes.TryFindLongestSuffix(word.AsSpan(), out var suffix))
             {
@@ -501,7 +501,7 @@ namespace Porter2StemmerStandard
             return word;
         }
 
-        public string Step5RemoveEorLSuffixes(string word, int r1, int r2)
+        internal static string Step5RemoveEorLSuffixes(string word, int r1, int r2)
         {
             var last = word[word.Length - 1];
 
