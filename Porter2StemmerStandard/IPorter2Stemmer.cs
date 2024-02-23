@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace Porter2StemmerStandard
 {
     public interface IPorter2Stemmer : IStemmer
@@ -6,17 +8,17 @@ namespace Porter2StemmerStandard
         /// <summary>
         /// Vowel characters used for stemming.
         /// </summary>
-        char[] Vowels { get; }
+        ReadOnlySpan<char> Vowels { get; }
 
         /// <summary>
         /// Valid doubled letters used for stemming.
         /// </summary>
-        string[] Doubles { get; }
+        ReadOnlySpan<string> Doubles { get; }
 
         /// <summary>
         /// Li- endings used for stemming.
         /// </summary>
-        char[] LiEndings { get; }
+        ReadOnlySpan<char> LiEndings { get; }
 
         /// <summary>
         /// R1 is the region after the first non-vowel following a vowel, 

@@ -11,27 +11,27 @@ namespace Porter2StemmerStandard
     public class EnglishPorter2Stemmer : IPorter2Stemmer
     {
 
-        private readonly char[] _alphabet =
+        private static readonly char[] _alphabet =
             Enumerable
                 .Range('a', 'z' - 'a' + 1)
                 .Select(c => (char)c)
                 .Concat(new[] { '\'' }).ToArray();
-        public char[] Alphabet { get { return _alphabet; } }
+        public ReadOnlySpan<char> Alphabet { get { return _alphabet; } }
 
         private static readonly char[] _vowels = "aeiouy".ToArray();
-        public char[] Vowels { get { return _vowels; } }
+        public ReadOnlySpan<char> Vowels { get { return _vowels; } }
 
         private static readonly string[] _doubles =
             { "bb", "dd", "ff", "gg", "mm", "nn", "pp", "rr", "tt" };
         private static readonly EndsWithContainer _doublesEndsWith = new EndsWithContainer(_doubles);
-        public string[] Doubles { get { return _doubles; } }
+        public ReadOnlySpan<string> Doubles { get { return _doubles; } }
 
         private static readonly HashSet<char> _liEndings = new HashSet<char>("cdeghkmnrt");
-        public char[] LiEndings { get { return _liEndings.ToArray(); } }
+        public ReadOnlySpan<char> LiEndings { get { return _liEndings.ToArray(); } }
 
-        private readonly char[] _nonShortConsonants = "wxY".ToArray();
+        private static readonly char[] _nonShortConsonants = "wxY".ToArray();
 
-        private readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(
+        private static readonly IsExactlyLookupContainer _exceptions = new IsExactlyLookupContainer(
             ("skis", "ski"),
             ("skies", "sky"),
             ("dying", "die"),
@@ -52,7 +52,7 @@ namespace Porter2StemmerStandard
             ("andes", "andes")
         );
 
-        private readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(
+        private static readonly IsExactlyContainer _exceptionsPart2 = new IsExactlyContainer(
             "inning", "outing", "canning", "herring", "earring",
             "proceed", "exceed", "succeed");
 
