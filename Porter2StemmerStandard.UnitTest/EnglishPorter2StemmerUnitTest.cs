@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using System;
 
 namespace Porter2StemmerStandard.UnitTest
 {
@@ -52,7 +53,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.GetRegion1(word);
+            var actual = stemmer.GetRegion1(word.AsSpan());
 
             // Assert
             Assert.AreEqual(5, actual);
@@ -66,7 +67,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.GetRegion2(word);
+            var actual = stemmer.GetRegion2(word.AsSpan());
 
             // Assert
             Assert.AreEqual(7, actual);
@@ -80,7 +81,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.GetRegion1(word);
+            var actual = stemmer.GetRegion1(word.AsSpan());
 
             // Assert
             Assert.AreEqual(5, actual);
@@ -94,7 +95,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.GetRegion2(word);
+            var actual = stemmer.GetRegion2(word.AsSpan());
 
             // Assert
             Assert.AreEqual(0, actual - word.Length);
@@ -108,7 +109,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.GetRegion1(word);
+            var actual = stemmer.GetRegion1(word.AsSpan());
 
             // Assert
             Assert.AreEqual(0, actual - word.Length);
@@ -122,7 +123,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.GetRegion2(word);
+            var actual = stemmer.GetRegion2(word.AsSpan());
 
             // Assert
             Assert.AreEqual(0, actual - word.Length);
@@ -140,7 +141,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -154,7 +155,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -168,7 +169,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -182,7 +183,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -196,7 +197,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -210,7 +211,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -224,7 +225,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -238,7 +239,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -252,7 +253,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.EndsInShortSyllable(word);
+            var actual = stemmer.EndsInShortSyllable(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -266,7 +267,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.IsShortWord(word);
+            var actual = stemmer.IsShortWord(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -280,7 +281,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.IsShortWord(word);
+            var actual = stemmer.IsShortWord(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -294,7 +295,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.IsShortWord(word);
+            var actual = stemmer.IsShortWord(word.AsSpan());
 
             // Assert
             Assert.IsTrue(actual);
@@ -308,7 +309,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.IsShortWord(word);
+            var actual = stemmer.IsShortWord(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -322,7 +323,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.IsShortWord(word);
+            var actual = stemmer.IsShortWord(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -336,7 +337,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.IsShortWord(word);
+            var actual = stemmer.IsShortWord(word.AsSpan());
 
             // Assert
             Assert.IsFalse(actual);
@@ -625,7 +626,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("inbree", actual);
@@ -638,7 +639,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("inbree", actual);
@@ -651,7 +652,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("fred", actual);
@@ -664,7 +665,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("luxuriate", actual);
@@ -677,7 +678,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("luxuriate", actual);
@@ -690,7 +691,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("luxuriate", actual);
@@ -703,7 +704,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("luxuriate", actual);
@@ -716,7 +717,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("hop", actual);
@@ -729,7 +730,7 @@ namespace Porter2StemmerStandard.UnitTest
             var stemmer = new EnglishPorter2Stemmer();
 
             // Act
-            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word));
+            var actual = stemmer.Step1BRemoveLySuffixes(word, stemmer.GetRegion1(word.AsSpan()));
 
             // Assert
             Assert.AreEqual("hope", actual);

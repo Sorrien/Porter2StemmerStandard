@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Porter2StemmerStandard.UnitTest
 {
@@ -13,7 +14,7 @@ namespace Porter2StemmerStandard.UnitTest
                 "xyz"
             );
 
-            var actual = target.Contains("abc");
+            var actual = target.Contains("abc".AsSpan());
 
             Assert.True(actual);
         }
@@ -29,7 +30,7 @@ namespace Porter2StemmerStandard.UnitTest
                 "xyz"
             );
 
-            var actual = target.Contains(word);
+            var actual = target.Contains(word.AsSpan());
 
             Assert.False(actual);
         }

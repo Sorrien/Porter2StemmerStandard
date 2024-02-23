@@ -1,4 +1,6 @@
-﻿namespace Porter2StemmerStandard
+﻿using System;
+
+namespace Porter2StemmerStandard
 {
     public class StartsWithContainer : BTreeContainer
     {
@@ -6,7 +8,7 @@
         {
         }
 
-        public bool TryFindLongestPrefix(string word, out string prefix)
+        public bool TryFindLongestPrefix(ReadOnlySpan<char> word, out string prefix)
         {
             var node = _root;
 

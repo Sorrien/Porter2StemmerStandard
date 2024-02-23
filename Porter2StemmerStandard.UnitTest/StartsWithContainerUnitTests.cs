@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Porter2StemmerStandard.UnitTest
 {
@@ -16,7 +17,7 @@ namespace Porter2StemmerStandard.UnitTest
                 "xyz",
                 "abcd");
 
-            var actual = target.TryFindLongestPrefix(word, out var actualPrefix);
+            var actual = target.TryFindLongestPrefix(word.AsSpan(), out var actualPrefix);
 
             Assert.IsTrue(actual);
 
@@ -34,7 +35,7 @@ namespace Porter2StemmerStandard.UnitTest
                 "xyz",
                 "abcd");
 
-            var actual = target.TryFindLongestPrefix(word, out var actualPrefix);
+            var actual = target.TryFindLongestPrefix(word.AsSpan(), out var actualPrefix);
 
             Assert.IsFalse(actual);
         }
